@@ -23,7 +23,7 @@ export class Player {
 			frameRate: 25,
 			repeat: -1
 		});
-		
+
 		this.sprite.anims.create({
 			key: 'stand-left',
 			frames: this.scene.anims.generateFrameNames('stand-left', {
@@ -35,7 +35,7 @@ export class Player {
 			frameRate: 25,
 			repeat: -1
 		});
-		
+
 		this.sprite.anims.create({
 			key: 'run-right',
 			frames: this.scene.anims.generateFrameNames('run-right', {
@@ -47,7 +47,7 @@ export class Player {
 			frameRate: 25,
 			repeat: -1
 		});
-		
+
 		this.sprite.anims.create({
 			key: 'run-left',
 			frames: this.scene.anims.generateFrameNames('run-left', {
@@ -59,6 +59,7 @@ export class Player {
 			frameRate: 25,
 			repeat: -1
 		});
+
 		// Setup joystick if needed
 		this.joystickBase = scene.add.circle(0, 0, 90, 0x888888).setScrollFactor(0);
 		this.joystickThumb = scene.add.circle(0, 0, 50, 0xcccccc).setScrollFactor(0);
@@ -72,6 +73,10 @@ export class Player {
 		});
 
 		this.cursors = scene.input.keyboard.createCursorKeys(); // Fallback for desktop
+
+		this.running = scene.sound.add('running', {
+			volume: 0.5 // or adjust to taste
+		});
 	}
 
 	update() {
@@ -101,6 +106,12 @@ export class Player {
 
 		sprite.setVelocity(vx, vy);
 
+		if (vx != 0 || vy != 0) {
+			if (!this.running.isPlaying) {
+				this.running.play({ loop: true });
+			}
+		}
+
 		if (vx > 0) {
 			sprite.play('run-right', true);
 			this.lastDirection = 'right';
@@ -115,6 +126,7 @@ export class Player {
 				sprite.play('run-left', true);
 			}
 		} else {
+			this.running.stop();
 			// Not moving
 			if (this.lastDirection === 'right') {
 				sprite.play('stand-right', true);
@@ -122,8 +134,8 @@ export class Player {
 				sprite.play('stand-left', true);
 			}
 		}
-		
-		
+
+
 	}
 
 	destroy() {

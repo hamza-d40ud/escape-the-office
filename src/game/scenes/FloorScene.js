@@ -24,7 +24,8 @@ export class FloorScene extends Scene {
 		this.load.atlas('stand-left', 'assets/animations/StandingLeft.png', 'assets/animations/StandingLeft.json');
 		this.load.atlas('run-left', 'assets/animations/RunningLeft.png', 'assets/animations/RunningLeft.json');
 		this.load.atlas('run-right', 'assets/animations/RunningRight.png', 'assets/animations/RunningRight.json');
-		
+
+		this.load.audio('bgm', 'assets/audio/floor_1_bg.wav');
 	}
 
 	create() {
@@ -37,14 +38,14 @@ export class FloorScene extends Scene {
 
 		objectsLayer.setCollisionByProperty({ collides: true });
 
-		
+
 		this.player = new Player(this, 0, 0);
-		
+
 		const npcPath = [
 			{ x: 200, y: 100 },
-			{ x: 400, y: 100 },
+			{ x: 200, y: 300 },
 		];
-		
+
 		this.npcs.push(new Npc(this, 200, 100, npcPath));
 		const npc_players = []
 		const npc_cones = []
@@ -54,30 +55,39 @@ export class FloorScene extends Scene {
 			npc_cones.push(npc.visionGraphics)
 		})
 		this.physics.add.collider(this.player.sprite, objectsLayer);
-		
+
 		this.uiCamera = this.cameras.add(0, 0, this.scale.width, this.scale.height);
-		
+
 		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 		this.cameras.main.startFollow(this.player.sprite);
-		const desiredHeight = 150;
+
+		const desiredHeight = 250;
+
 		const zoom = this.scale.height / desiredHeight;
+
 		this.cameras.main.setZoom(zoom);
 		this.cameras.main.ignore([
 			this.player.joystickBase,
 			this.player.joystickThumb
 		]);
-		
+
 		this.timer = new Timer(this, 6 * 60);
 
 		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite, ...npc_players, ...npc_cones]);
 
-// 		const debugGraphics = this.add.graphics().setAlpha(0.75);
-// objectsLayer.renderDebug(debugGraphics, {
-//   tileColor: null,
-//   collidingTileColor: new Phaser.Display.Color(255, 0, 0, 255), // Red
-//   faceColor: new Phaser.Display.Color(0, 255, 0, 255) // Green
-// });
-		
+		// 		const debugGraphics = this.add.graphics().setAlpha(0.75);
+		// objectsLayer.renderDebug(debugGraphics, {
+		//   tileColor: null,
+		//   collidingTileColor: new Phaser.Display.Color(255, 0, 0, 255), // Red
+		//   faceColor: new Phaser.Display.Color(0, 255, 0, 255) // Green
+		// });
+
+		this.bgm = this.sound.add('bgm', {
+			loop: true,
+			volume: 0.1 // or adjust to taste
+		});
+
+		this.bgm.play();
 	}
 
 	update() {

@@ -31,6 +31,8 @@ export class Preloader extends Scene {
 		this.load.image('mainmenu', 'Main.png');
 
 		this.load.image('logo', 'logo.png');
+
+		this.load.audio('running', 'audio/running.mp3');
 	}
 
 	create() {
