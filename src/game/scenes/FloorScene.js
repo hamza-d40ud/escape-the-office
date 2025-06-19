@@ -33,13 +33,6 @@ export class FloorScene extends Scene {
 			console.log(data)
 			this.init(data)
 		});
-
-		// Setup exit zone
-		this.exitZone = this.physics.add.sprite(500, 100, 'exit');
-
-		this.physics.add.overlap(this.player.sprite, this.exitZone, () => {
-			GameManager.emit('floor-cleared');
-		});
 	}
 
 	handleFloorClear() {
@@ -109,6 +102,22 @@ export class FloorScene extends Scene {
 
 		this.bgm.play();
 
+		console.log(this.map);
+
+		// Create exit zone from object
+		const exitObject = this.map.findObject('objects', obj => {
+			console.log(obj);
+			return obj.name === 'exit'
+		});
+
+		this.exitZone = this.add.zone(exitObject.x, exitObject.y, exitObject.width, exitObject.height);
+		this.physics.add.existing(this.exitZone);
+		this.exitZone.body.setAllowGravity(false);
+		this.exitZone.body.setImmovable(true);
+
+		this.physics.add.overlap(this.player.sprite, this.exitZone, () => {
+			GameManager.emit('floor-cleared');
+		});
 	}
 
 	update() {
