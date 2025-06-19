@@ -2,7 +2,7 @@
 export class Player {
 	constructor(scene, x, y) {
 		this.scene = scene;
-		this.speed = 100;
+		this.speed = 140;
 		this.width = 64;
 		this.height = 64;
 

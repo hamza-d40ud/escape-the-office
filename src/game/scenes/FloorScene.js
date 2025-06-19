@@ -2,9 +2,12 @@
 import { Scene } from 'phaser';
 import { Player } from '../Entities/Player';
 import { Timer } from '../Entities/Timer';
+import { Npc } from '../Entities/Npc';
 
 
 export class FloorScene extends Scene {
+	npcs = []
+
 	constructor() {
 		super('FloorScene');
 
@@ -28,7 +31,10 @@ export class FloorScene extends Scene {
 	}
 
 	create() {
+		this.npcs = [];
+
 		this.map = this.make.tilemap({ key: 'map' });
+
 		const tiles = this.map.addTilesetImage('Desert', 'tiles');
 		const layer = this.map.createLayer('Ground', tiles, 0, 0);
 
@@ -41,16 +47,27 @@ export class FloorScene extends Scene {
 		this.player = new Player(this, 100, 100);
 		this.timer = new Timer(this, 6 * 60);
 
+		const npcPath = [
+			{ x: 200, y: 100 },
+			{ x: 400, y: 100 },
+			{ x: 400, y: 300 },
+			{ x: 200, y: 300 }
+		];
+
+		this.npcs.push(new Npc(this, 200, 100, npcPath));
+
 		// Optional: camera follow
 		this.cameras.main.startFollow(this.player.sprite);
 	}
 
 	update() {
 		this.player.update()
+		this.npcs.forEach(npc => npc.update())
 	}
 
 	destroy() {
 		this.player.destroy();
+		this.npcs.forEach(npc => npc.destroy())
 	}
 }
 

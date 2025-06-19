@@ -5,8 +5,8 @@ export class Timer {
 		console.log(timeSeconds)
 
 		this.timerText = scene.add.text(scene.scale.width - 20, 20, '', {
-			font: '32px Arial',
-			fill: '#ffffff'
+			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+			stroke: '#000000', strokeThickness: 4,
 		}).setOrigin(1, 0).setScrollFactor(0);
 
 		// Start a repeating timed event every 1 second
