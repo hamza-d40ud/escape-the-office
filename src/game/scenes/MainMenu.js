@@ -1,28 +1,33 @@
 import { Scene } from 'phaser';
 
-export class MainMenu extends Scene
-{
-    constructor ()
-    {
-        super('MainMenu');
-    }
+export class MainMenu extends Scene {
+	constructor() {
+		super('MainMenu');
+	}
 
-    create ()
-    {
-        this.add.image(512, 384, 'background');
+	create() {
+		const zone1 = this.add.zone(0, 0, 345, 300).setOrigin(0).setName('Plain').setInteractive();
 
-        this.add.image(512, 300, 'logo');
+		//  And some events
+		this.input.on('gameobjectdown', (pointer, gameObject) => {
 
-        this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+			fork.x = pointer.x;
+			fork.y = pointer.y;
 
-        this.input.once('pointerdown', () => {
+			label.setText(gameObject.name);
+			label.x = gameObject.x;
+			label.y = gameObject.y;
 
-            this.scene.start('Game');
+		});
 
-        });
-    }
+		this.add
+			.image(0, 0, 'mainmenu')
+			.setDisplaySize(this.scale.width, this.scale.height)
+			.setOrigin(0, 0)
+			.setScrollFactor(0);
+
+		this.input.once('pointerdown', () => {
+			this.scene.start('FloorScene');
+		});
+	}
 }

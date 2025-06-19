@@ -1,9 +1,13 @@
 // scenes/FloorScene.js
 import { Scene } from 'phaser';
 import { Player } from '../Entities/Player';
+import { Timer } from '../Entities/Timer';
+import { Npc } from '../Entities/Npc';
 
 
 export class FloorScene extends Scene {
+	npcs = []
+
 	constructor() {
 		super('FloorScene');
 
@@ -17,6 +21,8 @@ export class FloorScene extends Scene {
 	}
 
 	create() {
+		this.npcs = [];
+
 		this.map = this.make.tilemap({ key: 'map' });
 		const tileset = this.map.addTilesetImage('main_tailset', 'tiles');
 		const mainLayer = this.map.createLayer('main', tileset, 0, 0);
@@ -33,6 +39,20 @@ export class FloorScene extends Scene {
 		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite]);
 		
 		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+		this.player = new Player(this, 100, 100);
+		this.timer = new Timer(this, 6 * 60);
+
+		const npcPath = [
+			{ x: 200, y: 100 },
+			{ x: 400, y: 100 },
+			{ x: 400, y: 300 },
+			{ x: 200, y: 300 }
+		];
+
+		this.npcs.push(new Npc(this, 200, 100, npcPath));
+
+		// Optional: camera follow
 		this.cameras.main.startFollow(this.player.sprite);
 		const desiredHeight = 350;
 		const zoom = this.scale.height / desiredHeight;
@@ -53,10 +73,12 @@ export class FloorScene extends Scene {
 
 	update() {
 		this.player.update()
+		this.npcs.forEach(npc => npc.update())
 	}
 
 	destroy() {
 		this.player.destroy();
+		this.npcs.forEach(npc => npc.destroy())
 	}
 }
 
