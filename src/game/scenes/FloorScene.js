@@ -21,17 +21,17 @@ export class FloorScene extends Scene {
 		});
 
 		GameManager.once('game-won', () => {
-			this.stop();
+			this.stopAllAudio();
 		});
 
 		GameManager.once('player-spotted', () => {
 			console.log('Player spotted! Switching to GameOverScene...');
-			this.stop()
+			this.stopAllAudio()
 			this.scene.start('GameOver');
 		});
 
 		GameManager.once('floor-started', (data) => {
-			this.stop()
+			this.stopAllAudio()
 			this.scene.restart({ floor: data.floor });
 		});
 	}
@@ -41,7 +41,7 @@ export class FloorScene extends Scene {
 		this.cameras.main.fadeOut(500);
 
 		this.time.delayedCall(600, () => {
-			this.stop()
+			this.stopAllAudio()
 			GameManager.nextFloor();
 		});
 	}
@@ -126,10 +126,8 @@ export class FloorScene extends Scene {
 		this.npcs.forEach(npc => npc.update())
 	}
 
-	stop() {
-		this.player.stop()
-		this.npcs.forEach(npc => npc.stop())
-		this.bgm.stop();
+	stopAllAudio() {
+		this.sound.stopAll(); // stops all currently playing sounds
 	}
 
 	destroy() {
