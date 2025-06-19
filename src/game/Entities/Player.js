@@ -2,7 +2,7 @@
 export class Player {
 	constructor(scene, x, y) {
 		this.scene = scene;
-		this.speed = 100;
+		this.speed = 135;
 		this.width = 64;
 		this.height = 64;
 
@@ -19,14 +19,16 @@ export class Player {
 		this.sprite.setCollideWorldBounds(true);
 
 		this.sprite.setDisplaySize(this.width, this.height);
-		//
 		// Setup joystick if needed
+		this.joystickBase = scene.add.circle(0, 0, 90, 0x888888).setScrollFactor(0);
+		this.joystickThumb = scene.add.circle(0, 0, 50, 0xcccccc).setScrollFactor(0);
+
 		this.joystick = scene.plugins.get('rexVirtualJoystick').add(scene, {
-			x: scene.scale.width - 100,
-			y: scene.scale.height - 100,
-			radius: 60,
-			base: scene.add.circle(0, 0, 60, 0x888888),
-			thumb: scene.add.circle(0, 0, 25, 0xcccccc),
+			x: scene.scale.width * 0.85,
+			y: scene.scale.height * 0.65,
+			radius: 90,
+			base: this.joystickBase,
+			thumb: this.joystickThumb,
 		});
 
 		this.cursors = scene.input.keyboard.createCursorKeys(); // Fallback for desktop

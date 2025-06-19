@@ -12,16 +12,20 @@ import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-p
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config = {
 	type: AUTO,
-	width: 1024,
-	height: 768,
+	width: 1920,
+	height: 1072,
 	parent: 'game-container',
 	backgroundColor: '#028af8',
 	scale: {
-		mode: Phaser.Scale.RESIZE,
+		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH
 	},
+    pixelArt: true,
+    render: {
+        antialias: false,
+    },
 	physics: {
-		default: 'arcade'
+		default: 'arcade',
 	},
 	scene: [
 		Boot,

@@ -10,37 +10,45 @@ export class FloorScene extends Scene {
 	}
 
 	preload() {
-		this.load.image('tiles', 'assets/maps/tmw_desert_spacing.png');
-		this.load.tilemapTiledJSON('map', 'assets/maps/desert.json');
+		this.load.image('tiles', 'assets/maps/tilemap.png');
+		this.load.tilemapTiledJSON('map', 'assets/maps/level1.json');
 
 		this.load.atlas('soldier', 'assets/animations/soldier.png', 'assets/animations/soldier.json');
-
-		this.anims.create({
-			key: 'walk-down',
-			frames: this.anims.generateFrameNumbers('soldier', { start: 0, end: 3 }),
-			frameRate: 8,
-			repeat: -1
-		});
-
-
-		// this.add.image(512, 384, 'background').setAlpha(0.5);
 	}
 
 	create() {
 		this.map = this.make.tilemap({ key: 'map' });
-		const tiles = this.map.addTilesetImage('Desert', 'tiles');
-		const layer = this.map.createLayer('Ground', tiles, 0, 0);
+		const tileset = this.map.addTilesetImage('main_tailset', 'tiles');
+		const mainLayer = this.map.createLayer('main', tileset, 0, 0);
+		const objectsLayer = this.map.createLayer('objects', tileset, 0, 0);
 
-		this.marker = this.add.graphics();
-		this.marker.lineStyle(2, 0x000000, 1);
-		this.marker.strokeRect(0, 0, 6 * this.map.tileWidth, 6 * this.map.tileHeight);
+		objectsLayer.setCollisionByProperty({ collides: true });
 
+		
+		this.player = new Player(this, 0, 0);
+		
+		this.physics.add.collider(this.player.sprite, objectsLayer);
+		
+		this.uiCamera = this.cameras.add(0, 0, this.scale.width, this.scale.height);
+		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite]);
+		
 		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-
-		this.player = new Player(this, 100, 100);
-
-		// Optional: camera follow
 		this.cameras.main.startFollow(this.player.sprite);
+		const desiredHeight = 350;
+		const zoom = this.scale.height / desiredHeight;
+		this.cameras.main.setZoom(zoom);
+		this.cameras.main.ignore([
+			this.player.joystickBase,
+			this.player.joystickThumb
+		]);
+
+// 		const debugGraphics = this.add.graphics().setAlpha(0.75);
+// objectsLayer.renderDebug(debugGraphics, {
+//   tileColor: null,
+//   collidingTileColor: new Phaser.Display.Color(255, 0, 0, 255), // Red
+//   faceColor: new Phaser.Display.Color(0, 255, 0, 255) // Green
+// });
+		
 	}
 
 	update() {
