@@ -1,5 +1,6 @@
-export class Npc {
+import GameManager from '../Managers/GameManager.js';
 
+export class Npc {
 	constructor(scene, x, y, pathPoints = []) {
 		this.scene = scene;
 		this.speed = 80;
@@ -31,6 +32,12 @@ export class Npc {
 
 		this.visionGraphics = this.scene.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0.25 } });
 		this.visionGraphics.setDepth(1); // draw below NPC
+
+		this.steps = scene.sound.add('steps', {
+			volume: 0.5,
+			loop: true,
+			spatial: true
+		});
 	}
 
 	drawVisionCone(originX, originY, angleDeg, radius, fovDeg) {
@@ -85,7 +92,7 @@ export class Npc {
 		}
 
 		if (this.detectionCount >= this.maxDetectionCount) {
-			this.scene.scene.start('GameOver'); // or any failure logic
+			GameManager.emit('player-spotted', { npc: this });
 		}
 
 		if (this.pathPoints.length === 0) return;
@@ -124,9 +131,17 @@ export class Npc {
 
 		if (vx !== 0 || vy !== 0) {
 			sprite.play('walk', true);
+			if (!this.steps.isPlaying) {
+				this.steps.play({ loop: true });
+			}
 		} else {
 			sprite.stop('walk');
+			this.steps.stop();
 		}
+	}
+
+	stop() {
+		this.steps.stop();
 	}
 
 	destroy() {

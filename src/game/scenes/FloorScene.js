@@ -3,7 +3,7 @@ import { Scene } from 'phaser';
 import { Player } from '../Entities/Player';
 import { Timer } from '../Entities/Timer';
 import { Npc } from '../Entities/Npc';
-
+import GameManager from '../Managers/GameManager.js';
 
 export class FloorScene extends Scene {
 	npcs = []
@@ -29,6 +29,14 @@ export class FloorScene extends Scene {
 	}
 
 	create() {
+		GameManager.once('player-spotted', () => {
+			console.log('Player spotted! Switching to GameOverScene...');
+			this.player.stop()
+			this.stop()
+			this.npcs.forEach(npc => npc.stop())
+			this.scene.start('GameOver');
+		});
+
 		this.npcs = [];
 
 		this.map = this.make.tilemap({ key: 'map' });
@@ -38,7 +46,6 @@ export class FloorScene extends Scene {
 
 		objectsLayer.setCollisionByProperty({ collides: true });
 
-
 		this.player = new Player(this, 0, 0);
 
 		const npcPath = [
@@ -47,13 +54,16 @@ export class FloorScene extends Scene {
 		];
 
 		this.npcs.push(new Npc(this, 200, 100, npcPath));
+
 		const npc_players = []
 		const npc_cones = []
+
 		this.npcs.map((npc) => {
 			npc_players.push(npc.sprite)
 			this.physics.add.collider(npc.sprite, objectsLayer)
 			npc_cones.push(npc.visionGraphics)
 		})
+
 		this.physics.add.collider(this.player.sprite, objectsLayer);
 
 		this.uiCamera = this.cameras.add(0, 0, this.scale.width, this.scale.height);
@@ -66,6 +76,7 @@ export class FloorScene extends Scene {
 		const zoom = this.scale.height / desiredHeight;
 
 		this.cameras.main.setZoom(zoom);
+
 		this.cameras.main.ignore([
 			this.player.joystickBase,
 			this.player.joystickThumb
@@ -75,19 +86,13 @@ export class FloorScene extends Scene {
 
 		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite, ...npc_players, ...npc_cones]);
 
-		// 		const debugGraphics = this.add.graphics().setAlpha(0.75);
-		// objectsLayer.renderDebug(debugGraphics, {
-		//   tileColor: null,
-		//   collidingTileColor: new Phaser.Display.Color(255, 0, 0, 255), // Red
-		//   faceColor: new Phaser.Display.Color(0, 255, 0, 255) // Green
-		// });
-
 		this.bgm = this.sound.add('bgm', {
 			loop: true,
-			volume: 0.1 // or adjust to taste
+			volume: 0.3 // or adjust to taste
 		});
 
 		this.bgm.play();
+
 	}
 
 	update() {
@@ -95,7 +100,12 @@ export class FloorScene extends Scene {
 		this.npcs.forEach(npc => npc.update())
 	}
 
+	stop() {
+		this.bgm.stop();
+	}
+
 	destroy() {
+		this.bgm.stop();
 		this.player.destroy();
 		this.npcs.forEach(npc => npc.destroy())
 	}

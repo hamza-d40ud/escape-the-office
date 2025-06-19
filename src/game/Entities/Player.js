@@ -75,7 +75,9 @@ export class Player {
 		this.cursors = scene.input.keyboard.createCursorKeys(); // Fallback for desktop
 
 		this.running = scene.sound.add('running', {
-			volume: 0.5 // or adjust to taste
+			volume: 0.5,
+			loop: true,
+			spatial: true
 		});
 	}
 
@@ -135,7 +137,11 @@ export class Player {
 			}
 		}
 
+		// this.scene.sound.setListenerPosition(this.sprite.x, this.sprite.y, 0);
+	}
 
+	stop() {
+		this.running.stop();
 	}
 
 	destroy() {

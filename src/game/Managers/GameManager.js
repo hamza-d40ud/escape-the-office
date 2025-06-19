@@ -1,6 +1,10 @@
 // managers/GameManager.js
-class GameManager {
+import Phaser from 'phaser';
+
+class GameManager extends Phaser.Events.EventEmitter {
 	constructor() {
+		super()
+
 		this.reset();
 	}
 
@@ -28,4 +32,4 @@ class GameManager {
 	}
 }
 
-export const gameManager = new GameManager();
+export default GameManager = new GameManager();
