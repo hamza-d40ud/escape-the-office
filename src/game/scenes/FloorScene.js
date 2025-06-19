@@ -1,6 +1,7 @@
 // scenes/FloorScene.js
 import { Scene } from 'phaser';
 import { Player } from '../Entities/Player';
+import { Timer } from '../Entities/Timer';
 
 
 export class FloorScene extends Scene {
@@ -38,6 +39,7 @@ export class FloorScene extends Scene {
 		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 
 		this.player = new Player(this, 100, 100);
+		this.timer = new Timer(this, 6 * 60);
 
 		// Optional: camera follow
 		this.cameras.main.startFollow(this.player.sprite);
