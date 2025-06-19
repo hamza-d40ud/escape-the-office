@@ -1,6 +1,4 @@
 export class Npc {
-	detectionCount = 0;
-	maxDetectionCount = 60;
 
 	constructor(scene, x, y, pathPoints = []) {
 		this.scene = scene;
@@ -9,8 +7,12 @@ export class Npc {
 		this.height = 64;
 		this.pathPoints = pathPoints;
 		this.currentTargetIndex = 0;
-
+		this.facingAngle = 0;       // current facing angle in degrees
+		this.targetAngle = 0;       // desired direction
+		this.angleLerpSpeed = 5;
 		this.sprite = scene.physics.add.sprite(x, y, 'soldier');
+		this.detectionCount = 0;
+		this.maxDetectionCount = 60;
 
 		this.sprite.anims.create({
 			key: 'walk',
@@ -27,7 +29,7 @@ export class Npc {
 		this.sprite.setCollideWorldBounds(true);
 		this.sprite.setDisplaySize(this.width, this.height);
 
-		this.visionGraphics = this.scene.add.graphics({ fillStyle: { color: 0xffcc00, alpha: 0.25 } });
+		this.visionGraphics = this.scene.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0.25 } });
 		this.visionGraphics.setDepth(1); // draw below NPC
 	}
 
@@ -52,8 +54,6 @@ export class Npc {
 		this.visionGraphics.lineTo(originX, originY);
 		this.visionGraphics.closePath();
 		this.visionGraphics.fillPath();
-
-		return this.visionGraphics;
 	}
 
 	isPlayerInCone(npc, player, coneAngleDeg, coneRadius, fovDeg) {
@@ -97,7 +97,6 @@ export class Npc {
 		const dy = target.y - sprite.y;
 		const distance = Math.hypot(dx, dy);
 
-
 		if (distance < 4) {
 			// Arrived at current target
 			this.currentTargetIndex = (this.currentTargetIndex + 1) % this.pathPoints.length;
@@ -110,10 +109,20 @@ export class Npc {
 
 		var vx = dirX * this.speed;
 		var vy = dirY * this.speed;
+
 		sprite.setVelocity(vx, vy);
 
+		// If we're moving, update targetAngle
+		if (distance > 1) {
+			this.targetAngle = Phaser.Math.RadToDeg(Math.atan2(dy, dx));
+		}
+
+		// Smoothly rotate current angle toward targetAngle
+		let delta = Phaser.Math.Angle.WrapDegrees(this.targetAngle - this.facingAngle);
+
+		this.facingAngle += Phaser.Math.Clamp(delta, -this.angleLerpSpeed, this.angleLerpSpeed);
+
 		if (vx !== 0 || vy !== 0) {
-			this.facingAngle = Phaser.Math.RadToDeg(Math.atan2(vy, vx));
 			sprite.play('walk', true);
 		} else {
 			sprite.stop('walk');
