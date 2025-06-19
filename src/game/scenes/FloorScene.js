@@ -18,6 +18,13 @@ export class FloorScene extends Scene {
 		this.load.tilemapTiledJSON('map', 'assets/maps/level1.json');
 
 		this.load.atlas('soldier', 'assets/animations/soldier.png', 'assets/animations/soldier.json');
+
+
+		this.load.atlas('stand-right', 'assets/animations/StandingRight.png', 'assets/animations/StandingRight.json');
+		this.load.atlas('stand-left', 'assets/animations/StandingLeft.png', 'assets/animations/StandingLeft.json');
+		this.load.atlas('run-left', 'assets/animations/RunningLeft.png', 'assets/animations/RunningLeft.json');
+		this.load.atlas('run-right', 'assets/animations/RunningRight.png', 'assets/animations/RunningRight.json');
+		
 	}
 
 	create() {
@@ -32,12 +39,13 @@ export class FloorScene extends Scene {
 
 		
 		this.player = new Player(this, 0, 0);
+		
 		const npcPath = [
 			{ x: 200, y: 100 },
 			{ x: 400, y: 100 },
 		];
 		
-		// this.npcs.push(new Npc(this, 200, 100, npcPath));
+		this.npcs.push(new Npc(this, 200, 100, npcPath));
 		const npc_players = []
 		const npc_cones = []
 		this.npcs.map((npc) => {
@@ -51,7 +59,7 @@ export class FloorScene extends Scene {
 		
 		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 		this.cameras.main.startFollow(this.player.sprite);
-		const desiredHeight = 350;
+		const desiredHeight = 150;
 		const zoom = this.scale.height / desiredHeight;
 		this.cameras.main.setZoom(zoom);
 		this.cameras.main.ignore([

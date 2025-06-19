@@ -3,22 +3,62 @@ export class Player {
 	constructor(scene, x, y) {
 		this.scene = scene;
 		this.speed = 135;
-		this.width = 64;
-		this.height = 64;
+		this.width = 40;
+		this.height = 53;
 
-		this.sprite = scene.physics.add.sprite(x, y, 'soldier');// Place at bottom-right corner
-
-		this.sprite.anims.create({
-			key: 'walk',
-			frames: this.scene.anims.generateFrameNames('soldier', { prefix: 'soldier_3_walk_', start: 1, end: 8 }),
-			frameRate: 12,
-			repeat: -1
-		});
-
+		this.sprite = scene.physics.add.sprite(x, y, 'run-right'); // Default texture atlas
 		this.sprite.setDepth(1);
 		this.sprite.setCollideWorldBounds(true);
-
 		this.sprite.setDisplaySize(this.width, this.height);
+		this.sprite.setBodySize(230, 430)
+
+		this.sprite.anims.create({
+			key: 'stand-right',
+			frames: this.scene.anims.generateFrameNames('stand-right', {
+				prefix: 'Standing_',
+				start: 0,
+				end: 14, // Or whatever the last frame index is
+				zeroPad: 5
+			}),
+			frameRate: 25,
+			repeat: -1
+		});
+		
+		this.sprite.anims.create({
+			key: 'stand-left',
+			frames: this.scene.anims.generateFrameNames('stand-left', {
+				prefix: 'Standing_',
+				start: 0,
+				end: 14, // Or whatever the last frame index is
+				zeroPad: 5
+			}),
+			frameRate: 25,
+			repeat: -1
+		});
+		
+		this.sprite.anims.create({
+			key: 'run-right',
+			frames: this.scene.anims.generateFrameNames('run-right', {
+				prefix: 'Running_',
+				start: 0,
+				end: 9, // Or whatever the last frame index is
+				zeroPad: 5
+			}),
+			frameRate: 25,
+			repeat: -1
+		});
+		
+		this.sprite.anims.create({
+			key: 'run-left',
+			frames: this.scene.anims.generateFrameNames('run-left', {
+				prefix: 'Running_',
+				start: 0,
+				end: 9, // Or whatever the last frame index is
+				zeroPad: 5
+			}),
+			frameRate: 25,
+			repeat: -1
+		});
 		// Setup joystick if needed
 		this.joystickBase = scene.add.circle(0, 0, 90, 0x888888).setScrollFactor(0);
 		this.joystickThumb = scene.add.circle(0, 0, 50, 0xcccccc).setScrollFactor(0);
@@ -61,11 +101,29 @@ export class Player {
 
 		sprite.setVelocity(vx, vy);
 
-		if (vx != 0 || vy != 0) {
-			sprite.play('walk', true);
+		if (vx > 0) {
+			sprite.play('run-right', true);
+			this.lastDirection = 'right';
+		} else if (vx < 0) {
+			sprite.play('run-left', true);
+			this.lastDirection = 'left';
+		} else if (vy !== 0) {
+			// Moving vertically → play last known horizontal direction
+			if (this.lastDirection === 'right') {
+				sprite.play('run-right', true);
+			} else {
+				sprite.play('run-left', true);
+			}
 		} else {
-			sprite.stop('walk');
+			// Not moving
+			if (this.lastDirection === 'right') {
+				sprite.play('stand-right', true);
+			} else {
+				sprite.play('stand-left', true);
+			}
 		}
+		
+		
 	}
 
 	destroy() {

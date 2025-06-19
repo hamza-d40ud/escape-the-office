@@ -25,7 +25,7 @@ const config = {
         antialias: false,
     },
 	physics: {
-		default: 'arcade',
+		default: 'arcade'
 	},
 	scene: [
 		Boot,
