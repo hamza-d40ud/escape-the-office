@@ -7,6 +7,7 @@ export class Player {
 		this.height = 53;
 
 		this.sprite = scene.physics.add.sprite(x, y, 'run-right'); // Default texture atlas
+
 		this.sprite.setDepth(1);
 		this.sprite.setCollideWorldBounds(true);
 		this.sprite.setDisplaySize(this.width, this.height);

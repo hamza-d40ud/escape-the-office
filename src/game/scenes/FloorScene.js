@@ -10,7 +10,6 @@ export class FloorScene extends Scene {
 
 	constructor() {
 		super('FloorScene');
-
 	}
 
 	create() {
@@ -30,7 +29,9 @@ export class FloorScene extends Scene {
 		});
 
 		GameManager.once('floor-started', (data) => {
-			console.log(data)
+			this.player.stop()
+			this.stop()
+			this.npcs.forEach(npc => npc.stop())
 			this.init(data)
 		});
 	}
@@ -46,23 +47,26 @@ export class FloorScene extends Scene {
 
 	init(data) {
 		this.floor = data.floor || GameManager.floor;
+
+		let floorData = GameManager.getFloorData(this.floor);
+
+		console.log(data, this.floor);
+
 		this.npcs = [];
 
-		this.map = this.make.tilemap({ key: 'map' });
+		this.map = this.make.tilemap({ key: floorData.mapkey });
+
 		const tileset = this.map.addTilesetImage('main_tailset', 'tiles');
 		const mainLayer = this.map.createLayer('main', tileset, 0, 0);
 		const objectsLayer = this.map.createLayer('objects', tileset, 0, 0);
 
 		objectsLayer.setCollisionByProperty({ collides: true });
 
-		this.player = new Player(this, 0, 0);
+		this.player = new Player(this, floorData.player.x, floorData.player.y);
 
-		const npcPath = [
-			{ x: 200, y: 100 },
-			{ x: 200, y: 300 },
-		];
-
-		this.npcs.push(new Npc(this, 200, 100, npcPath));
+		floorData.npcs.forEach(npc => {
+			this.npcs.push(new Npc(this, npc.x, npc.y, npc.path));
+		})
 
 		const npc_players = []
 		const npc_cones = []
@@ -91,22 +95,19 @@ export class FloorScene extends Scene {
 			this.player.joystickThumb
 		]);
 
-		this.timer = new Timer(this, 6 * 60);
+		this.timer = new Timer(this, floorData.timer);
 
 		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite, ...npc_players, ...npc_cones]);
 
-		this.bgm = this.sound.add('bgm', {
+		this.bgm = this.sound.add(floorData.backgroundmusic, {
 			loop: true,
 			volume: 0.3 // or adjust to taste
 		});
 
 		this.bgm.play();
 
-		console.log(this.map);
-
 		// Create exit zone from object
 		const exitObject = this.map.findObject('objects', obj => {
-			console.log(obj);
 			return obj.name === 'exit'
 		});
 
@@ -131,8 +132,6 @@ export class FloorScene extends Scene {
 
 	destroy() {
 		this.bgm.stop();
-		this.player.destroy();
-		this.npcs.forEach(npc => npc.destroy())
 	}
 }
 
