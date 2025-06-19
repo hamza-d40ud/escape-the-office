@@ -69,14 +69,13 @@ class GameManager extends Phaser.Events.EventEmitter {
 
 	startGame(scene) {
 		this.currentFloor = 1;
-		this.currentScene = scene;
+		scene.scene.start('FloorScene', { floor: 1 });
 	}
 
 	nextFloor() {
 		if (this.currentFloor < this.maxFloors) {
 			this.currentFloor++;
-			// this.emit('floor-started', { floor: this.currentFloor });
-			this.currentScene.scene.restart({ floor: this.currentFloor });
+			this.emit('floor-started', { floor: this.currentFloor });
 		} else {
 			this.emit('game-won');
 			this.currentScene.scene.start('GameWon');

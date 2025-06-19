@@ -28,7 +28,6 @@ export class MainMenu extends Scene {
 
 		this.input.once('pointerdown', () => {
 			GameManager.startGame(this);
-			this.scene.start('FloorScene', { floor: 1 });
 		});
 	}
 }

@@ -20,19 +20,19 @@ export class FloorScene extends Scene {
 			this.handleFloorClear();
 		});
 
+		GameManager.once('game-won', () => {
+			this.stop();
+		});
+
 		GameManager.once('player-spotted', () => {
 			console.log('Player spotted! Switching to GameOverScene...');
-			this.player.stop()
 			this.stop()
-			this.npcs.forEach(npc => npc.stop())
 			this.scene.start('GameOver');
 		});
 
 		GameManager.once('floor-started', (data) => {
-			this.player.stop()
 			this.stop()
-			this.npcs.forEach(npc => npc.stop())
-			this.init(data)
+			this.scene.restart({ floor: data.floor });
 		});
 	}
 
@@ -41,6 +41,7 @@ export class FloorScene extends Scene {
 		this.cameras.main.fadeOut(500);
 
 		this.time.delayedCall(600, () => {
+			this.stop()
 			GameManager.nextFloor();
 		});
 	}
@@ -50,7 +51,7 @@ export class FloorScene extends Scene {
 
 		let floorData = GameManager.getFloorData(this.floor);
 
-		console.log(data, this.floor);
+		console.log(data, this.floor, floorData);
 
 		this.npcs = [];
 
@@ -64,17 +65,15 @@ export class FloorScene extends Scene {
 
 		this.player = new Player(this, floorData.player.x, floorData.player.y);
 
-		floorData.npcs.forEach(npc => {
-			this.npcs.push(new Npc(this, npc.x, npc.y, npc.path));
-		})
-
 		const npc_players = []
 		const npc_cones = []
 
-		this.npcs.map((npc) => {
-			npc_players.push(npc.sprite)
-			this.physics.add.collider(npc.sprite, objectsLayer)
-			npc_cones.push(npc.visionGraphics)
+		floorData.npcs.forEach((npc) => {
+			let npcToPush = new Npc(this, npc.x, npc.y, npc.path);
+			this.npcs.push(npcToPush);
+			npc_players.push(npcToPush.sprite)
+			this.physics.add.collider(npcToPush.sprite, objectsLayer)
+			npc_cones.push(npcToPush.visionGraphics)
 		})
 
 		this.physics.add.collider(this.player.sprite, objectsLayer);
@@ -82,6 +81,7 @@ export class FloorScene extends Scene {
 		this.uiCamera = this.cameras.add(0, 0, this.scale.width, this.scale.height);
 
 		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
 		this.cameras.main.startFollow(this.player.sprite);
 
 		const desiredHeight = 250;
@@ -127,6 +127,8 @@ export class FloorScene extends Scene {
 	}
 
 	stop() {
+		this.player.stop()
+		this.npcs.forEach(npc => npc.stop())
 		this.bgm.stop();
 	}
 
