@@ -10,6 +10,9 @@ export class FloorScene extends Scene {
 	}
 
 	preload() {
+		this.load.image('tiles', 'assets/maps/tmw_desert_spacing.png');
+		this.load.tilemapTiledJSON('map', 'assets/maps/desert.json');
+
 		this.load.atlas('soldier', 'assets/animations/soldier.png', 'assets/animations/soldier.json');
 
 		this.anims.create({
@@ -20,10 +23,20 @@ export class FloorScene extends Scene {
 		});
 
 
-		this.add.image(512, 384, 'background').setAlpha(0.5);
+		// this.add.image(512, 384, 'background').setAlpha(0.5);
 	}
 
 	create() {
+		this.map = this.make.tilemap({ key: 'map' });
+		const tiles = this.map.addTilesetImage('Desert', 'tiles');
+		const layer = this.map.createLayer('Ground', tiles, 0, 0);
+
+		this.marker = this.add.graphics();
+		this.marker.lineStyle(2, 0x000000, 1);
+		this.marker.strokeRect(0, 0, 6 * this.map.tileWidth, 6 * this.map.tileHeight);
+
+		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
 		this.player = new Player(this, 100, 100);
 
 		// Optional: camera follow

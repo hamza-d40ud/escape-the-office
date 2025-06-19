@@ -2,9 +2,9 @@
 export class Player {
 	constructor(scene, x, y) {
 		this.scene = scene;
-		this.speed = 10;
-		this.width = 150;
-		this.height = 250;
+		this.speed = 100;
+		this.width = 64;
+		this.height = 64;
 
 		this.sprite = scene.physics.add.sprite(x, y, 'soldier');// Place at bottom-right corner
 
@@ -40,9 +40,16 @@ export class Player {
 
 		sprite.setVelocity(0);
 
+		var leftKeyDown = joystick.left;
+		var rightKeyDown = joystick.right;
+		var upKeyDown = joystick.up;
+		var downKeyDown = joystick.down;
+
 		if (joystick.force > 0) {
-			vx = joystick.forceX * speed;
-			vy = joystick.forceY * speed;
+			if (leftKeyDown) vx = -speed;
+			else if (rightKeyDown) vx = speed;
+			if (upKeyDown) vy = -speed;
+			else if (downKeyDown) vy = speed;
 		} else {
 			if (cursors.left.isDown) vx = -speed;
 			else if (cursors.right.isDown) vx = speed;
@@ -52,7 +59,7 @@ export class Player {
 
 		sprite.setVelocity(vx, vy);
 
-		if (vx > 0 || vy > 0) {
+		if (vx != 0 || vy != 0) {
 			sprite.play('walk', true);
 		} else {
 			sprite.stop('walk');
