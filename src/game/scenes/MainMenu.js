@@ -1,13 +1,13 @@
 import { Scene } from 'phaser';
 
+import GameManager from '../Managers/GameManager.js';
+
 export class MainMenu extends Scene {
 	constructor() {
 		super('MainMenu');
 	}
 
 	create() {
-		const zone1 = this.add.zone(0, 0, 345, 300).setOrigin(0).setName('Plain').setInteractive();
-
 		//  And some events
 		this.input.on('gameobjectdown', (pointer, gameObject) => {
 
@@ -27,7 +27,8 @@ export class MainMenu extends Scene {
 			.setScrollFactor(0);
 
 		this.input.once('pointerdown', () => {
-			this.scene.start('FloorScene');
+			GameManager.startGame(this);
+			this.scene.start('FloorScene', { floor: 1 });
 		});
 	}
 }

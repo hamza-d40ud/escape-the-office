@@ -17,10 +17,8 @@ export class Preloader extends Scene {
 
 		//  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
 		this.load.on('progress', (progress) => {
-
 			//  Update the progress bar (our bar is 464px wide, so 100% = 464px)
 			bar.width = 4 + (460 * progress);
-
 		});
 	}
 
@@ -35,6 +33,19 @@ export class Preloader extends Scene {
 		this.load.audio('running', 'audio/running.mp3');
 
 		this.load.audio('steps', 'audio/steps.wav');
+
+		this.load.image('tiles', 'maps/tilemap.png');
+		this.load.tilemapTiledJSON('map', 'maps/level1.json');
+
+		this.load.atlas('soldier', 'animations/soldier.png', 'animations/soldier.json');
+
+
+		this.load.atlas('stand-right', 'animations/StandingRight.png', 'animations/StandingRight.json');
+		this.load.atlas('stand-left', 'animations/StandingLeft.png', 'animations/StandingLeft.json');
+		this.load.atlas('run-left', 'animations/RunningLeft.png', 'animations/RunningLeft.json');
+		this.load.atlas('run-right', 'animations/RunningRight.png', 'animations/RunningRight.json');
+
+		this.load.audio('bgm', 'audio/floor_1_bg.wav');
 	}
 
 	create() {

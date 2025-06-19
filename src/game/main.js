@@ -3,6 +3,7 @@ import { Game as MainGame } from './scenes/Game';
 import { GameOver } from './scenes/GameOver';
 import { FloorScene } from './scenes/FloorScene';
 import { MainMenu } from './scenes/MainMenu';
+import { GameWon } from './scenes/GameWon';
 import { Preloader } from './scenes/Preloader';
 import { AUTO, Game } from 'phaser';
 
@@ -20,10 +21,10 @@ const config = {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH
 	},
-    pixelArt: true,
-    render: {
-        antialias: false,
-    },
+	pixelArt: true,
+	render: {
+		antialias: false,
+	},
 	physics: {
 		default: 'arcade'
 	},
@@ -33,6 +34,7 @@ const config = {
 		MainMenu,
 		MainGame,
 		GameOver,
+		GameWon,
 		FloorScene
 	],
 	plugins: {

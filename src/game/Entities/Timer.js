@@ -2,7 +2,6 @@ export class Timer {
 	constructor(scene, timeSeconds) {
 		this.scene = scene; // 6 minutes in seconds
 		this.timeLeft = timeSeconds; // 6 minutes in seconds
-		console.log(timeSeconds)
 
 		this.timerText = scene.add.text(scene.scale.width - 20, 20, '', {
 			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',

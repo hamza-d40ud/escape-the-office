@@ -13,22 +13,14 @@ export class FloorScene extends Scene {
 
 	}
 
-	preload() {
-		this.load.image('tiles', 'assets/maps/tilemap.png');
-		this.load.tilemapTiledJSON('map', 'assets/maps/level1.json');
-
-		this.load.atlas('soldier', 'assets/animations/soldier.png', 'assets/animations/soldier.json');
-
-
-		this.load.atlas('stand-right', 'assets/animations/StandingRight.png', 'assets/animations/StandingRight.json');
-		this.load.atlas('stand-left', 'assets/animations/StandingLeft.png', 'assets/animations/StandingLeft.json');
-		this.load.atlas('run-left', 'assets/animations/RunningLeft.png', 'assets/animations/RunningLeft.json');
-		this.load.atlas('run-right', 'assets/animations/RunningRight.png', 'assets/animations/RunningRight.json');
-
-		this.load.audio('bgm', 'assets/audio/floor_1_bg.wav');
-	}
-
 	create() {
+		GameManager.setScene(this);
+
+		// Listen for floor-cleared
+		GameManager.once('floor-cleared', () => {
+			this.handleFloorClear();
+		});
+
 		GameManager.once('player-spotted', () => {
 			console.log('Player spotted! Switching to GameOverScene...');
 			this.player.stop()
@@ -37,6 +29,30 @@ export class FloorScene extends Scene {
 			this.scene.start('GameOver');
 		});
 
+		GameManager.once('floor-started', (data) => {
+			console.log(data)
+			this.init(data)
+		});
+
+		// Setup exit zone
+		this.exitZone = this.physics.add.sprite(500, 100, 'exit');
+
+		this.physics.add.overlap(this.player.sprite, this.exitZone, () => {
+			GameManager.emit('floor-cleared');
+		});
+	}
+
+	handleFloorClear() {
+		// Optional: fade out, play sound, delay, etc.
+		this.cameras.main.fadeOut(500);
+
+		this.time.delayedCall(600, () => {
+			GameManager.nextFloor();
+		});
+	}
+
+	init(data) {
+		this.floor = data.floor || GameManager.floor;
 		this.npcs = [];
 
 		this.map = this.make.tilemap({ key: 'map' });
