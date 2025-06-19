@@ -1,8 +1,8 @@
 import { Boot } from './scenes/Boot';
-import { Game as MainGame } from './scenes/Game';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
+import { firstFloor } from './scenes/floors/first';
 import { AUTO, Game } from 'phaser';
 
 //  Find out more information about the Game Config at:
@@ -11,6 +11,12 @@ const config = {
     type: AUTO,
     width: 1024,
     height: 768,
+    physics: {
+        default: 'arcade',  // or 'matter' if you want matter physics
+        arcade: {
+          debug: true,
+        }
+      },
     parent: 'game-container',
     backgroundColor: '#028af8',
     scale: {
@@ -21,7 +27,7 @@ const config = {
         Boot,
         Preloader,
         MainMenu,
-        MainGame,
+        firstFloor,
         GameOver
     ]
 };
