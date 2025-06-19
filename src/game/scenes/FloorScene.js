@@ -32,27 +32,24 @@ export class FloorScene extends Scene {
 
 		
 		this.player = new Player(this, 0, 0);
-		
-		this.physics.add.collider(this.player.sprite, objectsLayer);
-		
-		this.uiCamera = this.cameras.add(0, 0, this.scale.width, this.scale.height);
-		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite]);
-		
-		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-
-		this.player = new Player(this, 100, 100);
-		this.timer = new Timer(this, 6 * 60);
-
 		const npcPath = [
 			{ x: 200, y: 100 },
 			{ x: 400, y: 100 },
-			{ x: 400, y: 300 },
-			{ x: 200, y: 300 }
 		];
-
-		this.npcs.push(new Npc(this, 200, 100, npcPath));
-
-		// Optional: camera follow
+		
+		// this.npcs.push(new Npc(this, 200, 100, npcPath));
+		const npc_players = []
+		const npc_cones = []
+		this.npcs.map((npc) => {
+			npc_players.push(npc.sprite)
+			this.physics.add.collider(npc.sprite, objectsLayer)
+			npc_cones.push(npc.visionGraphics)
+		})
+		this.physics.add.collider(this.player.sprite, objectsLayer);
+		
+		this.uiCamera = this.cameras.add(0, 0, this.scale.width, this.scale.height);
+		
+		this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 		this.cameras.main.startFollow(this.player.sprite);
 		const desiredHeight = 350;
 		const zoom = this.scale.height / desiredHeight;
@@ -61,6 +58,10 @@ export class FloorScene extends Scene {
 			this.player.joystickBase,
 			this.player.joystickThumb
 		]);
+		
+		this.timer = new Timer(this, 6 * 60);
+
+		this.uiCamera.ignore([mainLayer, objectsLayer, this.player.sprite, ...npc_players, ...npc_cones]);
 
 // 		const debugGraphics = this.add.graphics().setAlpha(0.75);
 // objectsLayer.renderDebug(debugGraphics, {
