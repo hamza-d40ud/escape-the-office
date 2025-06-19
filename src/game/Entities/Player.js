@@ -6,28 +6,20 @@ export class Player {
 		this.width = 150;
 		this.height = 250;
 
+		this.sprite = scene.physics.add.sprite(x, y, 'soldier');// Place at bottom-right corner
 
-		// this.joystick = scene.physics.add.sprite(10, 10, 'joystick');
-		// this.handle = scene.physics.add.sprite(10, 10, 'handle');
-		this.sprite = scene.physics.add.sprite(x, y, 'player');// Place at bottom-right corner
-
-		// let padding = 100;
-
-		// this.container = this.scene.add.container(x, y);
-		// // this.container.setOrigin(1, 1);
-		// this.container.setScrollFactor(0);
-		// this.container.setPosition(this.scene.scale.width - padding, this.scene.scale.height - padding);
-
-		// this.container.add(this.joystick);
-		// this.container.add(this.handle);
+		this.sprite.anims.create({
+			key: 'walk',
+			frames: this.scene.anims.generateFrameNames('soldier', { prefix: 'soldier_3_walk_', start: 1, end: 8 }),
+			frameRate: 12,
+			repeat: -1
+		});
 
 		this.sprite.setDepth(1);
 		this.sprite.setCollideWorldBounds(true);
 
 		this.sprite.setDisplaySize(this.width, this.height);
-		// this.joystick.setScale(0.5);;
-		// this.handle.setScale(0.5);
-
+		//
 		// Setup joystick if needed
 		this.joystick = scene.plugins.get('rexVirtualJoystick').add(scene, {
 			x: scene.scale.width - 100,
@@ -49,17 +41,22 @@ export class Player {
 		sprite.setVelocity(0);
 
 		if (joystick.force > 0) {
-			vx = Math.cos(joystick.angle) * joystick.force * speed;
-			vy = -(Math.sin(joystick.angle) * joystick.force * speed);
+			vx = joystick.forceX * speed;
+			vy = joystick.forceY * speed;
 		} else {
 			if (cursors.left.isDown) vx = -speed;
 			else if (cursors.right.isDown) vx = speed;
-
 			if (cursors.up.isDown) vy = -speed;
 			else if (cursors.down.isDown) vy = speed;
 		}
 
 		sprite.setVelocity(vx, vy);
+
+		if (vx > 0 || vy > 0) {
+			sprite.play('walk', true);
+		} else {
+			sprite.stop('walk');
+		}
 	}
 
 	destroy() {

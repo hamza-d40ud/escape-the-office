@@ -10,9 +10,16 @@ export class FloorScene extends Scene {
 	}
 
 	preload() {
-		this.load.image('player', 'assets/player.png');
-		this.load.image('joystick', 'assets/Joystick.png');
-		this.load.image('handle', 'assets/LargeHandleFilledGrey.png');
+		this.load.atlas('soldier', 'assets/animations/soldier.png', 'assets/animations/soldier.json');
+
+		this.anims.create({
+			key: 'walk-down',
+			frames: this.anims.generateFrameNumbers('soldier', { start: 0, end: 3 }),
+			frameRate: 8,
+			repeat: -1
+		});
+
+
 		this.add.image(512, 384, 'background').setAlpha(0.5);
 	}
 
