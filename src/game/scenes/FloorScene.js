@@ -47,6 +47,11 @@ export class FloorScene extends Scene {
 			this.stopAllAudio()
 			this.scene.restart({ floor: data.floor });
 		});
+
+		this.successTone = this.sound.add("success", {
+			loop: false,
+			volume: 0.4 // or adjust to taste
+		});
 	}
 
 	handleFloorClear() {
@@ -157,6 +162,7 @@ export class FloorScene extends Scene {
 				this.physics.add.overlap(this.player.sprite, zone, () => {
 					this.objectives.forEach(x => {
 						if (x.key === obj.key && !x.complete) {
+							this.successTone.play();
 							x.complete = true;
 						}
 					})

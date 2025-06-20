@@ -52,6 +52,7 @@ export class Preloader extends Scene {
 
 		this.load.audio('bgm', 'audio/floor_1_bg.wav');
 		this.load.audio('rida_1', 'audio/rida_1.mp3');
+		this.load.audio('success', 'audio/success.ogg');
 	}
 
 	create() {
