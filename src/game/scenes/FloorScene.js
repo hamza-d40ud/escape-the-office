@@ -38,9 +38,8 @@ export class FloorScene extends Scene {
 
 		GameManager.once('player-spotted-ended', () => {
 			this.stopAllAudio()
-			var score = this.calculateScore(false)
-			GameManager.emit('game-over', { score });
-			this.scene.start('GameOver', { score });
+			GameManager.emit('game-over', { score: 0 });
+			this.scene.start('GameOver', { score: 0 });
 		});
 
 		GameManager.once('floor-started', (data) => {
@@ -50,7 +49,7 @@ export class FloorScene extends Scene {
 
 		this.successTone = this.sound.add("success", {
 			loop: false,
-			volume: 0.4 // or adjust to taste
+			 // or adjust to taste
 		});
 	}
 
@@ -100,12 +99,20 @@ export class FloorScene extends Scene {
 		const npc_players = []
 		const npc_cones = []
 
+		let c = 1;
 		floorData.npcs.forEach((npc) => {
-			let npcToPush = new Npc(this, objectsLayer, npc.x, npc.y, npc.sound, npc.path);
+			const pathObj = this.map.findObject(`npcs`, obj => obj.name === `npc${c}`);
+			const path = pathObj.polygon.map(point => ({
+				x: point.x + pathObj.x,
+				y: point.y + pathObj.y
+			}));
+			
+			let npcToPush = new Npc(this, objectsLayer, path[0].x, path[0].y, npc.sound, npc.npc_name, npc.video_name, path);
 			this.npcs.push(npcToPush);
 			npc_players.push(npcToPush.sprite)
 			this.physics.add.collider(npcToPush.sprite, objectsLayer)
 			npc_cones.push(npcToPush.visionGraphics)
+			c++;
 		})
 
 		this.physics.add.collider(this.player.sprite, objectsLayer);
@@ -116,11 +123,11 @@ export class FloorScene extends Scene {
 
 		this.cameras.main.startFollow(this.player.sprite);
 
-		const desiredHeight = 600;
+		const desiredHeight = 1000;
 
 		const zoom = this.scale.height / desiredHeight;
 
-		this.cameras.main.setZoom(zoom);
+		// this.cameras.main.setZoom(zoom);
 
 		this.cameras.main.roundPixels = true;
 
@@ -135,7 +142,7 @@ export class FloorScene extends Scene {
 
 		this.bgm = this.sound.add(floorData.backgroundmusic, {
 			loop: true,
-			volume: 0.1 // or adjust to taste
+			volume: 0.7 // or adjust to taste
 		});
 
 		this.bgm.play();
@@ -147,12 +154,9 @@ export class FloorScene extends Scene {
 
 
 		this.objectives.forEach(obj => {
-			console.log(this.map.objects)
 			const objectiveObject = this.map.findObject('objects', objective => {
 				return objective.name === obj.key
 			});
-
-			console.log(obj, objectiveObject);
 
 			if (objectiveObject) {
 				var zone = this.add.zone(objectiveObject.x, objectiveObject.y, objectiveObject.width, objectiveObject.height);
@@ -265,21 +269,25 @@ export class FloorScene extends Scene {
 	calculateScore(gameWon) {
 		let score = 0;
 
-		if (this.objectives && this.uiElements.checkboxes.length > 0) {
-			this.objectives.forEach((obj) => {
-				if (obj.complete) {
-					score += obj.score;
-				}
-			})
-		}
-
-		score += (this.player.pretendBusyUsesLeft * 150)
-
-		score += (this.player.maddashUsesLeft * 50)
-
 		if (gameWon) {
-			score += (this.timer.timeLeft * 2);
+			if (this.objectives && this.uiElements.checkboxes.length > 0) {
+				this.objectives.forEach((obj) => {
+					if (obj.complete) {
+						score += obj.score;
+					}
+				})
+			}
+
+			// score += (this.player.pretendBusyUsesLeft * 150)
+
+			// console.log('busy scoore', score)
+
+			// score += (this.player.maddashUsesLeft * 50)
+
+			score += Math.ceil((this.timer.timeLeft * 10) / 3);
 		}
+
+
 
 		return score;
 	}

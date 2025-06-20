@@ -5,8 +5,10 @@ export class Player {
 	constructor(scene, x, y) {
 		this.scene = scene;
 		this.speed = 300;
-		this.width = 159;
-		this.height = 210;
+		// this.width = 159;
+		// this.height = 210;
+		this.width = 98;
+		this.height = 130;
 		this.pretendBusyUsesLeft = GameManager.pretendBusyUses;
 		this.maddashUsesLeft = GameManager.madDashUses;
 
@@ -18,7 +20,7 @@ export class Player {
 
 		this.busyTone = this.scene.sound.add("vocal_cute_angry", {
 			loop: false,
-			volume: 0.4 // or adjust to taste
+			 // or adjust to taste
 		});
 		this.pretendBusyText = scene.add.text(scene.scale.width - 20, 80, '', {
 			fontFamily: 'Arial Black', fontSize: 52, color: '#ffffff',
@@ -39,7 +41,7 @@ export class Player {
 
 		this.dashingTone = this.scene.sound.add("dashing", {
 			loop: false,
-			volume: 0.4 // or adjust to taste
+			 // or adjust to taste
 		});
 		this.madDashText = scene.add.text(scene.scale.width - 20, 130, '', {
 			fontFamily: 'Arial Black', fontSize: 52, color: '#ffffff',
@@ -63,7 +65,7 @@ export class Player {
 			this.maddashSprite
 		]);
 
-		this.sprite.setDepth(1);
+		this.sprite.setDepth(2);
 		this.sprite.setCollideWorldBounds(true);
 		this.sprite.setDisplaySize(this.width, this.height);
 		this.sprite.setBodySize(230, 430)
@@ -133,7 +135,7 @@ export class Player {
 		this.cursors = scene.input.keyboard.createCursorKeys(); // Fallback for desktop
 
 		this.running = scene.sound.add('running', {
-			volume: 0.5,
+			
 			loop: true,
 			spatial: true
 		});

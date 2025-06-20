@@ -1,36 +1,55 @@
 import GameManager from '../Managers/GameManager.js';
 
 export class Npc {
-	constructor(scene, wallLayer, x, y, sound, pathPoints = []) {
+	constructor(scene, wallLayer, x, y, sound, npc_name, video_name, pathPoints = []) {
 		this.wallLayer = wallLayer;
 		this.scene = scene;
-		this.speed = 80;
-		this.width = 210;
-		this.height = 210;
+		this.speed = 260;
+		this.width = 120;
+		this.height = 120;
 		this.pathPoints = pathPoints;
 		this.detected = false;
 		this.currentTargetIndex = 0;
 		this.facingAngle = 0;       // current facing angle in degrees
 		this.targetAngle = 0;       // desired direction
 		this.angleLerpSpeed = 5;
-		this.sprite = scene.physics.add.sprite(x, y, 'soldier');
+		this.sprite = scene.physics.add.sprite(x, y, `run-left-${npc_name}`);
 
 		this.detectionCount = 0;
-		this.maxDetectionCount = 100;
+		this.maxDetectionCount = 30;
 
 		this.soundCount = 0;
 		this.maxSoundCount = 40;
+		this.video_name = video_name;
+
+		this.debugBox = this.scene.add.graphics();
+this.debugBox.setDepth(10);
 
 		this.sprite.anims.create({
-			key: 'walk',
-			frames: this.scene.anims.generateFrameNames('soldier', {
-				prefix: 'soldier_3_walk_',
-				start: 1,
-				end: 8
+			key: `run-left-${npc_name}`,
+			frames: this.scene.anims.generateFrameNames(`run-left-${npc_name}`, {
+				prefix: 'Walking_',
+				start: 0,
+				end: 19,
+				zeroPad: 5
 			}),
-			frameRate: 12,
+			frameRate: 25,
 			repeat: -1
 		});
+
+
+		this.sprite.anims.create({
+			key: `run-right-${npc_name}`,
+			frames: this.scene.anims.generateFrameNames(`run-right-${npc_name}`, {
+				prefix: 'Walking_',
+				start: 0,
+				end: 19,
+				zeroPad: 5
+			}),
+			frameRate: 25,
+			repeat: -1
+		});
+
 
 		this.sprite.setDepth(1);
 		this.sprite.setCollideWorldBounds(true);
@@ -40,13 +59,13 @@ export class Npc {
 		this.visionGraphics.setDepth(1); // draw below NPC
 
 		this.caughtSound = scene.sound.add(sound, {
-			volume: 0.5,
+			
 			loop: false,
 			spatial: true
 		});
 
 		this.detectedSound = scene.sound.add(sound, {
-			volume: 0.5,
+			
 			loop: false,
 			spatial: true
 		});
@@ -63,7 +82,7 @@ export class Npc {
 		});
 
 		this.steps = scene.sound.add('steps', {
-			volume: 0.5,
+			
 			loop: true,
 			spatial: true
 		});
@@ -71,6 +90,7 @@ export class Npc {
 		this.prevPosition = new Phaser.Math.Vector2(x, y);
 		this.stuckTime = 0;
 		this.maxStuckTime = 1000;
+		this.npc_name = npc_name;
 	}
 
 	drawVisionCone(originX, originY, angleDeg, radius, fovDeg) {
@@ -78,19 +98,19 @@ export class Npc {
 
 		const ratio = Phaser.Math.Clamp(this.detectionCount / this.maxDetectionCount, 0, 1);
 
-		let r = 255, g = 255, b = 255; // start with white
+		let r = 228, g = 106, b = 142; // start with white
 
 		if (ratio <= 0.5) {
 			// Interpolate from white to yellow
 			const t = ratio / 0.5;
-			r = 255;
-			g = 255;
-			b = Math.floor(255 * (1 - t)); // 255 → 0
+			r = 228;
+			g = 106;
+			b = Math.floor(228 * (1 - t)); // 255 → 0
 		} else {
 			// Interpolate from yellow to red
 			const t = (ratio - 0.5) / 0.5;
-			r = 255;
-			g = Math.floor(255 * (1 - t)); // 255 → 0
+			r = 228;
+			g = Math.floor(106 * (1 - t)); // 255 → 0
 			b = 0;
 		}
 
@@ -172,148 +192,120 @@ export class Npc {
 		this.detected = true;
 		this.sprite.setVelocity(0)
 		this.steps.stop();
-		this.sprite.stop('walk');
+		this.sprite.stop(`run-right-${this.npc_name}`);
 		this.visionGraphics.clear();
 	}
 
 	update() {
-		if (this.detected) return;
+// Clear and redraw debug box
+this.debugBox.clear();
+this.debugBox.lineStyle(2, 0x00ff00, 1); // Green outline
 
+// Get the current bounds of the sprite
+const bounds = this.sprite.getBounds();
+this.debugBox.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+		if (this.detected) return;
+	
 		const sprite = this.sprite;
 		const player = this.scene.player;
-
-		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 400, 60);
-
+	
+		if (!player.busy)
+		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 700, 60);
+	
 		// Check if player is in cone
-		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 400, 60, this.scene.objects)) {
+		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 1100, 60, this.scene.objects)) {
 			this.soundCount++;
 		} else if (this.soundCount > 0) {
 			this.soundCount--;
 		}
-
-		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 200, 60, this.scene.objects)) {
+	
+		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 700, 60, this.scene.objects)) {
 			this.detectionCount++;
 		} else if (this.detectionCount > 0) {
 			this.detectionCount--;
 		}
-
+	
 		if (this.soundCount >= this.maxSoundCount) {
 			if (!this.caughtSound.isPlaying) {
 				this.caughtSound.play({ loop: false });
 			}
 		}
-
+	
 		if (this.detectionCount >= this.maxDetectionCount) {
 			this.detected = true;
-
-			sprite.setVelocity(0, 0);
-
-			GameManager.emit('player-spotted', { npc: this });
-
-			const playerCenter = player.sprite.getCenter();
-			const npcCenter = sprite.getCenter();
-
-			// Vector to player
-			const direction = new Phaser.Math.Vector2(
-				playerCenter.x - npcCenter.x,
-				playerCenter.y - npcCenter.y
-			).normalize();
-
-			// Apply fast velocity
-			const sprintSpeed = 300;
-
-			sprite.setVelocity(direction.x * sprintSpeed, direction.y * sprintSpeed);
-
-			// Play sprint animation (you must define it in advance)
-			sprite.play('npc_run_fast');
-
-			// Optional: face player direction
-			sprite.setFlipX(direction.x < 0);
-
-			this.scene.time.addEvent({
-				delay: 100, // start checking soon
-				loop: true,
-				callback: () => {
-					const distance = Phaser.Math.Distance.BetweenPoints(sprite, player.sprite);
-					if (distance < 50) {
-						sprite.setVelocity(0);
-						sprite.play('npc_attack'); // or 'grab', etc.
-
-						if (!this.detectedSound.isPlaying) {
-							this.detectedSound.play();
-						}
-
-						// Optional: emit event after a delay
-						this.scene.time.delayedCall(500, () => {
-							GameManager.emit('player-caught', { npc: this });
-						});
-
-						this.steps.stop();
-
-						sprite.stop('walk');
-
-						// Stop this loop
-						return false;
-					}
-				}
-			});
+			this.sprite.setVelocity(0, 0);
+			this.scene.scene.start('CutsceneScene', { video_name: this.video_name });
 			return;
 		}
-
+	
 		if (this.pathPoints.length === 0) return;
-
+	
 		const target = this.pathPoints[this.currentTargetIndex];
-
+	
 		const dx = target.x - sprite.x;
 		const dy = target.y - sprite.y;
 		const distance = Math.hypot(dx, dy);
-
+	
 		if (distance < 4) {
 			// Arrived at current target
 			this.currentTargetIndex = (this.currentTargetIndex + 1) % this.pathPoints.length;
 			return;
 		}
-
+	
 		// Normalize direction
 		const dirX = dx / distance;
 		const dirY = dy / distance;
-
+	
 		var vx = dirX * this.speed;
 		var vy = dirY * this.speed;
-
+	
 		sprite.setVelocity(vx, vy);
-
+	
 		// If we're moving, update targetAngle
 		if (distance > 1) {
 			this.targetAngle = Phaser.Math.RadToDeg(Math.atan2(dy, dx));
 		}
-
+	
 		// Smoothly rotate current angle toward targetAngle
 		let delta = Phaser.Math.Angle.WrapDegrees(this.targetAngle - this.facingAngle);
-
+	
 		this.facingAngle += Phaser.Math.Clamp(delta, -this.angleLerpSpeed, this.angleLerpSpeed);
-
-		if (vx !== 0 || vy !== 0) {
-			sprite.play('walk', true);
-			if (!this.steps.isPlaying) {
-				this.steps.play({ loop: true });
+	
+	
+		if (vx > 0) {
+			sprite.play(`run-right-${this.npc_name}`, true);
+			this.lastDirection = 'right';
+		} else if (vx < 0) {
+			sprite.play(`run-left-${this.npc_name}`, true);
+			this.lastDirection = 'left';
+		} else if (vy !== 0) {
+			// Moving vertically → play last known horizontal direction
+			if (this.lastDirection === 'right') {
+				sprite.play(`run-right-${this.npc_name}`, true);
+			} else {
+				sprite.play(`run-left-${this.npc_name}`, true);
 			}
 		} else {
-			sprite.stop('walk');
-			this.steps.stop();
+			this.running.stop();
+			// Not moving
+			if (this.lastDirection === 'right') {
+				sprite.play('stand-right', true);
+			} else {
+				sprite.play('stand-left', true);
+			}
 		}
-
+	
 		const now = this.scene.time.now;
 		const currentPos = this.sprite.getCenter();
-
+	
 		if (Phaser.Math.Distance.BetweenPoints(currentPos, this.prevPosition) < 2) {
 			this.stuckTime += this.scene.game.loop.delta;
 		} else {
 			this.stuckTime = 0;
 		}
-
+	
 		this.prevPosition.copy(currentPos);
-
+	
 		if (this.stuckTime > this.maxStuckTime) {
 			// If stuck for more than 1 second, force skip to next target
 			this.currentTargetIndex = (this.currentTargetIndex + 1) % this.pathPoints.length;

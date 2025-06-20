@@ -29,8 +29,22 @@ export class GameWon extends Scene {
 			align: 'center'
 		}).setOrigin(0.5);
 
+		this.gameWonMusic = this.sound.add('win', {
+			loop: true,
+			
+		});
+		this.gameWonMusic.play();
+		this.events.on('shutdown', this.stopGameWonMusic, this);
+		this.events.on('destroy', this.stopGameWonMusic, this);
+
 		this.input.once('pointerdown', () => {
 			this.scene.start('MainMenu');
 		});
+	}
+
+	stopGameWonMusic() {
+		if (this.gameWonMusic) {
+			this.gameWonMusic.stop();
+		}
 	}
 }

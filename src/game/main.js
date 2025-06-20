@@ -5,7 +5,9 @@ import { FloorScene } from './scenes/FloorScene';
 import { MainMenu } from './scenes/MainMenu';
 import { GameWon } from './scenes/GameWon';
 import { Preloader } from './scenes/Preloader';
+import { CutsceneScene } from './scenes/CutsceneScene';
 import { AUTO, Game } from 'phaser';
+import { LeaderboardScene } from './scenes/LeaderboardScene';
 
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 
@@ -16,7 +18,7 @@ const config = {
 	width: 3840,
 	height: 2160,
 	parent: 'game-container',
-	backgroundColor: '#028af8',
+	backgroundColor: '#000000',
 	scale: {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH
@@ -33,9 +35,11 @@ const config = {
 		Preloader,
 		MainMenu,
 		MainGame,
+		FloorScene,
 		GameOver,
 		GameWon,
-		FloorScene
+		LeaderboardScene,
+		CutsceneScene
 	],
 	plugins: {
 		global: [{
