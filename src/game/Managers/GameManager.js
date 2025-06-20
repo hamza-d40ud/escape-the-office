@@ -144,11 +144,14 @@ class GameManager extends Phaser.Events.EventEmitter {
 		this.submitted = false;
 
 		this.on('game-over', (data) => {
-			this.score = data.score
+			this.score = 0;
+			this.currentFloor = 1;
+			this.pretendBusyUses = 3;
+			this.madDashUses = 3;
 		})
 
 		this.on('floor-cleared', (data) => {
-			this.score = data.score
+			this.score += data.score
 		})
 	}
 
@@ -162,9 +165,13 @@ class GameManager extends Phaser.Events.EventEmitter {
 	}
 
 	nextFloor() {
+		console.log("this.currentFloor.", this.currentFloor)
+		console.log("this.maxFloors.", this.maxFloors)
 		if (this.currentFloor < this.maxFloors) {
-			this.currentFloor++;
-			this.emit('floor-started', { floor: this.currentFloor });
+			setTimeout(() => {
+				this.currentFloor++;
+				this.emit('floor-started', { floor: this.currentFloor });
+			}, 1000);
 		} else {
 			this.emit('game-won');
 			this.submitLeaderboardAttempt();

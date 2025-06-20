@@ -90,6 +90,7 @@ export class Preloader extends Scene {
 		this.load.video('yasser_cutscene', 'cutscenes/yasser_cutscene.mp4', 'loadeddata', false, true);
 		this.load.video('rida_cutscene', 'cutscenes/rida_cutscene.mp4', 'loadeddata', false, true);
 		this.load.video('splash_video', 'video/Splash screen.mp4', 'loadeddata', false, true);
+		this.load.video('win', 'video/wininng screen.mp4', 'loadeddata', false, true);
 	}
 
 	create() {

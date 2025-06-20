@@ -6,45 +6,28 @@ export class GameWon extends Scene {
 		super('GameWon');
 	}
 
-	create() {
-		this.cameras.main.setBackgroundColor(0xff0000);
+	create(data) {
+		const { width, height } = this.scale;
 
-		this.add
-			.image(0, 0, 'background')
-			.setDisplaySize(this.scale.width, this.scale.height)
-			.setOrigin(0, 0)
-			.setScrollFactor(0);
+		// Stop all sounds before video
+		this.sound.stopAll();
 
-		this.add.text(this.scale.width * 0.5, this.scale.height * 0.5, 'Congratulation you have escaped!!', {
-			fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
-			stroke: '#000000', strokeThickness: 8,
-			align: 'center'
-		}).setOrigin(0.5);
+		const videoName = 'win';
+		const video = this.add.video(width / 2, height / 2, videoName);
 
-		let score = GameManager.score;
+		video.setMute(false);
+		video.setVolume(1);
+		video.play(false); // no loop
 
-		this.add.text(this.scale.width * 0.5, this.scale.height * 0.6, 'Score: ' + score, {
-			fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
-			stroke: '#000000', strokeThickness: 8,
-			align: 'center'
-		}).setOrigin(0.5);
 
-		this.gameWonMusic = this.sound.add('win', {
-			loop: true,
-			
+		video.once('complete', () => {
+			video.pause(); // freeze on last frame
+
+			// Allow clicking anywhere to go to MainMenu
+			this.input.once('pointerdown', () => {
+				video.stop();
+				this.scene.start('MainMenu');
+			});
 		});
-		this.gameWonMusic.play();
-		this.events.on('shutdown', this.stopGameWonMusic, this);
-		this.events.on('destroy', this.stopGameWonMusic, this);
-
-		this.input.once('pointerdown', () => {
-			this.scene.start('MainMenu');
-		});
-	}
-
-	stopGameWonMusic() {
-		if (this.gameWonMusic) {
-			this.gameWonMusic.stop();
-		}
 	}
 }

@@ -39,7 +39,8 @@ export class GameOver extends Scene {
 		this.events.on('destroy', this.stopGameOverMusic, this);
 
 		this.input.once('pointerdown', () => {
-			this.scene.start('MainMenu');
+			console.log('Reloading window...');
+			window.location.reload();
 		});
 	}
 

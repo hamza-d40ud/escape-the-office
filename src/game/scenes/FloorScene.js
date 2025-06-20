@@ -61,7 +61,7 @@ export class FloorScene extends Scene {
 		GameManager.pretendBusyUses = this.player.pretendBusyUsesLeft;
 		GameManager.madDashUses = this.player.maddashUsesLeft;
 
-		this.time.delayedCall(600, () => {
+		this.time.delayedCall(1000, () => {
 			this.stopAllAudio()
 			GameManager.nextFloor();
 		});
@@ -79,6 +79,7 @@ export class FloorScene extends Scene {
 		this.floor = data.floor || GameManager.floor;
 
 		let floorData = GameManager.getFloorData(this.floor);
+		console.log(floorData)
 
 		this.npcs = [];
 		this.objectives = [];
