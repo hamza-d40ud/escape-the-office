@@ -4,7 +4,7 @@ export class Npc {
 	constructor(scene, wallLayer, x, y, sound, npc_name, video_name, pathPoints = []) {
 		this.wallLayer = wallLayer;
 		this.scene = scene;
-		this.speed = 260;
+		this.speed = 300;
 		this.width = 120;
 		this.height = 120;
 		this.pathPoints = pathPoints;
@@ -198,28 +198,28 @@ this.debugBox.setDepth(10);
 
 	update() {
 // Clear and redraw debug box
-this.debugBox.clear();
-this.debugBox.lineStyle(2, 0x00ff00, 1); // Green outline
+// this.debugBox.clear();
+// this.debugBox.lineStyle(2, 0x00ff00, 1); // Green outline
 
-// Get the current bounds of the sprite
-const bounds = this.sprite.getBounds();
-this.debugBox.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+// // Get the current bounds of the sprite
+// const bounds = this.sprite.getBounds();
+// this.debugBox.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
 		if (this.detected) return;
 	
 		const sprite = this.sprite;
 		const player = this.scene.player;
 	
 		if (!player.busy)
-		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 700, 60);
+		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 280, 360);
 	
 		// Check if player is in cone
-		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 1100, 60, this.scene.objects)) {
+		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 500, 360, this.scene.objects)) {
 			this.soundCount++;
 		} else if (this.soundCount > 0) {
 			this.soundCount--;
 		}
 	
-		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 700, 60, this.scene.objects)) {
+		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 280, 360, this.scene.objects)) {
 			this.detectionCount++;
 		} else if (this.detectionCount > 0) {
 			this.detectionCount--;

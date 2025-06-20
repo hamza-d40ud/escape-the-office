@@ -45,7 +45,8 @@ export class Preloader extends Scene {
 
 		this.load.image('tiles', 'maps/spritesheet.png');
 		this.load.tilemapTiledJSON('floor1', 'maps/floor1.json');
-		// this.load.tilemapTiledJSON('floor2', 'maps/floor2.json');/
+		this.load.tilemapTiledJSON('floor2', 'maps/floor2.json');
+		this.load.tilemapTiledJSON('floor3', 'maps/floor3.json');
 
 		this.load.atlas('soldier', 'animations/soldier/soldier.png', 'animations/soldier/soldier.json');
 
@@ -88,13 +89,14 @@ export class Preloader extends Scene {
 		this.load.video('karam_cutscene', 'cutscenes/karam_cutscene.mp4', 'loadeddata', false, true);
 		this.load.video('yasser_cutscene', 'cutscenes/yasser_cutscene.mp4', 'loadeddata', false, true);
 		this.load.video('rida_cutscene', 'cutscenes/rida_cutscene.mp4', 'loadeddata', false, true);
+		this.load.video('splash_video', 'video/Splash screen.mp4', 'loadeddata', false, true);
 	}
 
 	create() {
 		//  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
 		//  For example, you can define global animations here, so we can use them in other scenes.
 
-		//  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-		this.scene.start('MainMenu');
+		// Move to the SplashScene (which will play a splash video) instead of MainMenu
+		this.scene.start('SplashScene');
 	}
 }

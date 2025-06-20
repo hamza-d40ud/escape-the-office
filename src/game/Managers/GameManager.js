@@ -5,14 +5,66 @@ var floors = [
 	{
 		mapkey: 'floor1',
 		player: {
-			x: 3316,
-			y: 1370,
+			x: 887,
+			y: 586,
+		},
+		npcs: [
+		],
+		timer: 0.5 * 60,
+		backgroundmusic: 'bgm',
+		objectives: [
+			{
+				title: "Get your keys",
+				type: 1,
+				key: "keys",
+				required: true,
+				score: 100,
+			}
+		],
+	},
+	{
+		mapkey: 'floor2',
+		player: {
+			x: 1606,
+			y: 730,
 		},
 		npcs: [
 			{
-				sound: 'Yasser',
-				npc_name: 'yasser',
-				video_name: 'yasser_cutscene'
+				sound: 'Karam',
+				npc_name: 'karam',
+				video_name: 'karam_cutscene'
+			}
+		],
+		timer: 1.5 * 60,
+		backgroundmusic: 'bgm',
+		objectives: [
+			{
+				title: "Get your keys",
+				type: 1,
+				key: "keys",
+				required: true,
+				score: 100,
+			},
+			{
+				title: "Get your game jam duck",
+				type: 1,
+				key: "duck",
+				required: true,
+				score: 100,
+			}
+		],
+	},
+	{
+		mapkey: 'floor3',
+		player: {
+			x: 3312,
+			y: 2000,
+		},
+		npcs: [
+			{
+				sound: 'Karam',
+				npc_name: 'karam',
+				video_name: 'karam_cutscene'
 			},
 			{
 				sound: 'Farah',
@@ -25,82 +77,63 @@ var floors = [
 				video_name: 'rida_cutscene'
 			},
 			{
-				sound: 'Karam',
-				npc_name: 'karam',
-				video_name: 'karam_cutscene'
-			}
+				sound: 'Yasser',
+				npc_name: 'yasser',
+				video_name: 'yasser_cutscene'
+			},
+			{
+				sound: 'Tala',
+				npc_name: 'tala',
+				video_name: 'tala_cutscene'
+			},
 		],
-		timer: 3 * 60,
+		timer: 5 * 60,
 		backgroundmusic: 'bgm',
 		objectives: [
 			{
-				title: "Get your keys",
+				title: "Get your first key",
 				type: 1,
-				key: "keys",
+				key: "key1",
 				required: true,
 				score: 100,
 			},
 			{
-				title: "Clock Out",
+				title: "Get your second key",
 				type: 1,
-				key: "clock_out",
+				key: "key2",
+				required: true,
+				score: 100,
+			},
+			{
+				title: "Get your first game jam duck",
+				type: 1,
+				key: "duck1",
 				required: false,
 				score: 100,
-			}
+			},
+			{
+				title: "Get your second game jam duck",
+				type: 1,
+				key: "duck2",
+				required: false,
+				score: 100,
+			},
+			{
+				title: "Get your first لوزة",
+				type: 1,
+				key: "lozz1",
+				required: false,
+				score: 100,
+			},
+			{
+				title: "Get your second لوزة",
+				type: 1,
+				key: "lozz2",
+				required: false,
+				score: 100,
+			},
 		],
 	},
-	// {
-	// 	mapkey: 'floor2',
-	// 	player: {
-	// 		x: 100,
-	// 		y: 100,
-	// 	},
-	// 	npcs: [
-	// 		{
-	// 			x: 300,
-	// 			y: 500,
-	// 			path: [
-	// 				{ x: 300, y: 500 },
-	// 				{ x: 200, y: 300 },
-	// 			],
-	// 			sound: 'rida_1'
-	// 		},
-	// 		{
-	// 			x: 200,
-	// 			y: 100,
-	// 			path: [
-	// 				{ x: 200, y: 100 },
-	// 				{ x: 200, y: 300 },
-	// 			],
-	// 			sound: 'rida_1'
-	// 		}
-	// 	],
-	// 	timer: 2 * 60,
-	// 	backgroundmusic: 'bgm',
-	// 	objectives: [
-	// 		{
-	// 			title: "Get your keys",
-	// 			type: 1,
-	// 			key: "keys",
-	// 			required: true,
-	// 			score: 100,
-	// 		},
-	// 		{
-	// 			title: "Clock out",
-	// 			type: 2,
-	// 			key: "clock_out",
-	// 			required: true,
-	// 			score: 100,
-	// 		},
-	// 		{
-	// 			title: "Drink water",
-	// 			type: 3,
-	// 			key: "water",
-	// 			required: false,
-	// 			score: 300,
-	// 		}
-	// 	]
-	// }
 ];
 
 class GameManager extends Phaser.Events.EventEmitter {
@@ -116,7 +149,6 @@ class GameManager extends Phaser.Events.EventEmitter {
 
 		this.on('floor-cleared', (data) => {
 			this.score = data.score
-			this.submitLeaderboardAttempt();
 		})
 	}
 
@@ -135,6 +167,7 @@ class GameManager extends Phaser.Events.EventEmitter {
 			this.emit('floor-started', { floor: this.currentFloor });
 		} else {
 			this.emit('game-won');
+			this.submitLeaderboardAttempt();
 			this.currentScene.scene.start('GameWon');
 		}
 	}

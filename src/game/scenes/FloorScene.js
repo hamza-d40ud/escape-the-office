@@ -43,6 +43,7 @@ export class FloorScene extends Scene {
 		});
 
 		GameManager.once('floor-started', (data) => {
+			console.log(data)
 			this.stopAllAudio()
 			this.scene.restart({ floor: data.floor });
 		});
@@ -127,7 +128,7 @@ export class FloorScene extends Scene {
 
 		const zoom = this.scale.height / desiredHeight;
 
-		// this.cameras.main.setZoom(zoom);
+		this.cameras.main.setZoom(zoom);
 
 		this.cameras.main.roundPixels = true;
 

@@ -6,6 +6,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { GameWon } from './scenes/GameWon';
 import { Preloader } from './scenes/Preloader';
 import { CutsceneScene } from './scenes/CutsceneScene';
+import { SplashScene } from './scenes/SplashScene';
 import { AUTO, Game } from 'phaser';
 import { LeaderboardScene } from './scenes/LeaderboardScene';
 
@@ -39,7 +40,8 @@ const config = {
 		GameOver,
 		GameWon,
 		LeaderboardScene,
-		CutsceneScene
+		CutsceneScene,
+		SplashScene
 	],
 	plugins: {
 		global: [{
