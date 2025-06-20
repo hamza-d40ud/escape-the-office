@@ -39,7 +39,7 @@ export class FloorScene extends Scene {
 		GameManager.once('player-spotted-ended', () => {
 			this.stopAllAudio()
 			var score = this.calculateScore(false)
-			GameManager.emit('floor-cleared', { score });
+			GameManager.emit('game-over', { score });
 			this.scene.start('GameOver', { score });
 		});
 
@@ -52,6 +52,8 @@ export class FloorScene extends Scene {
 	handleFloorClear() {
 		// Optional: fade out, play sound, delay, etc.
 		this.cameras.main.fadeOut(500);
+
+		GameManager.abilityleftUses = this.player.abilityleftUses;
 
 		this.time.delayedCall(600, () => {
 			this.stopAllAudio()

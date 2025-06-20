@@ -1,3 +1,5 @@
+import GameManager from "../Managers/GameManager";
+
 // entities/Player.js
 export class Player {
 	constructor(scene, x, y) {
@@ -5,8 +7,81 @@ export class Player {
 		this.speed = 135;
 		this.width = 40;
 		this.height = 53;
+		this.abilityleftUses = GameManager.abilityleftUses;
+
+		this.busy = false;
 
 		this.sprite = scene.physics.add.sprite(x, y, 'run-right'); // Default texture atlas
+
+		this.timerText = scene.add.text(scene.scale.width - 20, 60, '', {
+			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+			stroke: '#000000', strokeThickness: 4,
+		}).setOrigin(1, 0).setScrollFactor(0);
+
+		this.phone = this.scene.add
+			.image(
+				scene.scale.width * 0.05,
+				scene.scale.height * 0.65,
+				'phone'
+			)
+			.setInteractive()
+			.on(
+				"pointerdown",
+				() => {
+					if (this.abilityleftUses > 0) {
+						this.busy = true;
+						this.sprite.setVelocity(0);
+
+						this.running.stop();
+						// Not moving
+						if (this.lastDirection === 'right') {
+							sprite.play('stand-right', true);
+						} else {
+							sprite.play('stand-left', true);
+						}
+					}
+				}
+			)
+			.on(
+				"pointerup",
+				() => {
+					if (this.abilityleftUses > 0) {
+						this.busy = false;
+						this.abilityleftUses -= 1;
+						this.timerText.setText(`Pretend busy: ${this.abilityleftUses} left`);
+					}
+				}
+			);
+		scene.input.keyboard.on("keydown-" + "W",
+			() => {
+				if (this.abilityleftUses > 0) {
+					this.busy = true;
+					this.sprite.setVelocity(0);
+
+					this.running.stop();
+					// Not moving
+					if (this.lastDirection === 'right') {
+						sprite.play('stand-right', true);
+					} else {
+						sprite.play('stand-left', true);
+					}
+				}
+			}
+		);
+
+		scene.input.keyboard.on("keyup-" + "W", () => {
+			if (this.abilityleftUses > 0) {
+				this.busy = false;
+				this.abilityleftUses -= 1;
+				this.timerText.setText(`Pretend busy: ${this.abilityleftUses} left`);
+			}
+		});
+
+		this.timerText.setText(`Pretend busy: ${this.abilityleftUses} left`);
+
+		this.scene.cameras.main.ignore([
+			this.phone
+		]);
 
 		this.sprite.setDepth(1);
 		this.sprite.setCollideWorldBounds(true);
@@ -90,7 +165,7 @@ export class Player {
 	}
 
 	update() {
-		if (this.spotted) return;
+		if (this.spotted || this.busy) return;
 
 		const { sprite, speed, joystick, cursors } = this;
 

@@ -15,6 +15,11 @@ export class Timer {
 			callbackScope: this,
 			loop: true
 		});
+
+		const minutes = Math.floor(this.timeLeft / 60);
+		const seconds = this.timeLeft % 60;
+
+		this.timerText.setText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
 	}
 
 	update() {

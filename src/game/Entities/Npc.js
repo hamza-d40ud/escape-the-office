@@ -14,12 +14,12 @@ export class Npc {
 		this.targetAngle = 0;       // desired direction
 		this.angleLerpSpeed = 5;
 		this.sprite = scene.physics.add.sprite(x, y, 'soldier');
-		
+
 		this.detectionCount = 0;
 		this.maxDetectionCount = 100;
-		
+
 		this.soundCount = 0;
-		this.maxSoundCount = 4;
+		this.maxSoundCount = 40;
 
 		this.sprite.anims.create({
 			key: 'walk',
@@ -39,10 +39,16 @@ export class Npc {
 		this.visionGraphics = this.scene.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0.25 } });
 		this.visionGraphics.setDepth(1); // draw below NPC
 
+		this.caughtSound = scene.sound.add(sound, {
+			volume: 0.5,
+			loop: false,
+			spatial: true
+		});
+
 		this.detectedSound = scene.sound.add(sound, {
 			volume: 0.5,
 			loop: false,
-			spatial: false
+			spatial: true
 		});
 
 		this.detectedSound.once('complete', () => {
@@ -129,8 +135,10 @@ export class Npc {
 	}
 
 	isPlayerInCone(npc, player, coneAngleDeg, coneRadius, fovDeg) {
-		const dx = player.x - npc.x;
-		const dy = player.y - npc.y;
+		if (player.busy) return;
+
+		const dx = player.sprite.x - npc.x;
+		const dy = player.sprite.y - npc.y;
 		const distance = Math.hypot(dx, dy);
 
 		// Outside cone radius
@@ -145,7 +153,7 @@ export class Npc {
 
 		const npcPos = new Phaser.Math.Vector2(npc.x, npc.y);
 
-		const playerPos = new Phaser.Math.Vector2(player.x, player.y);
+		const playerPos = new Phaser.Math.Vector2(player.sprite.x, player.sprite.y);
 
 		const ray = new Phaser.Geom.Line(npcPos.x, npcPos.y, playerPos.x, playerPos.y);
 
@@ -173,30 +181,28 @@ export class Npc {
 
 		const sprite = this.sprite;
 		const player = this.scene.player;
-		const playerPos = this.scene.player.sprite;
 
 		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 200, 60);
 
 		// Check if player is in cone
-		if (this.isPlayerInCone(sprite, playerPos, this.facingAngle, 400, 60, this.scene.objects)) {
+		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 400, 60, this.scene.objects)) {
 			this.soundCount++;
 		} else if (this.soundCount > 0) {
 			this.soundCount--;
 		}
 
-		if (this.isPlayerInCone(sprite, playerPos, this.facingAngle, 200, 60, this.scene.objects)) {
+		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 200, 60, this.scene.objects)) {
 			this.detectionCount++;
 		} else if (this.detectionCount > 0) {
 			this.detectionCount--;
 		}
 
-		// THIS CAUSING A BUG
-		// if (this.soundCount >= this.maxSoundCount){
-		// 	if (!this.detectedSound.isPlaying) {
-		// 		this.detectedSound.play();
-		// 	}
-		// }
-		
+		if (this.soundCount >= this.maxSoundCount) {
+			if (!this.caughtSound.isPlaying) {
+				this.caughtSound.play({ loop: false });
+			}
+		}
+
 		if (this.detectionCount >= this.maxDetectionCount) {
 			this.detected = true;
 
