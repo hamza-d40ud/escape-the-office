@@ -61,6 +61,10 @@ export class Npc {
 			loop: true,
 			spatial: true
 		});
+
+		this.prevPosition = new Phaser.Math.Vector2(x, y);
+		this.stuckTime = 0;
+		this.maxStuckTime = 1000;
 	}
 
 	drawVisionCone(originX, originY, angleDeg, radius, fovDeg) {
@@ -186,11 +190,12 @@ export class Npc {
 			this.detectionCount--;
 		}
 
-		if (this.soundCount >= this.maxSoundCount){
-			if (!this.detectedSound.isPlaying) {
-				this.detectedSound.play();
-			}
-		}
+		// THIS CAUSING A BUG
+		// if (this.soundCount >= this.maxSoundCount){
+		// 	if (!this.detectedSound.isPlaying) {
+		// 		this.detectedSound.play();
+		// 	}
+		// }
 		
 		if (this.detectionCount >= this.maxDetectionCount) {
 			this.detected = true;
@@ -290,6 +295,24 @@ export class Npc {
 		} else {
 			sprite.stop('walk');
 			this.steps.stop();
+		}
+
+		const now = this.scene.time.now;
+		const currentPos = this.sprite.getCenter();
+
+		if (Phaser.Math.Distance.BetweenPoints(currentPos, this.prevPosition) < 2) {
+			this.stuckTime += this.scene.game.loop.delta;
+		} else {
+			this.stuckTime = 0;
+		}
+
+		this.prevPosition.copy(currentPos);
+
+		if (this.stuckTime > this.maxStuckTime) {
+			// If stuck for more than 1 second, force skip to next target
+			this.currentTargetIndex = (this.currentTargetIndex + 1) % this.pathPoints.length;
+			this.stuckTime = 0;
+			return;
 		}
 	}
 
