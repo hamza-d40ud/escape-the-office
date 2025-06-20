@@ -13,7 +13,7 @@ export class Player {
 		this.sprite.setDisplaySize(this.width, this.height);
 		this.sprite.setBodySize(230, 430)
 
-		this.isSpotted = false;
+		this.spotted = false;
 
 		this.sprite.anims.create({
 			key: 'stand-right',
@@ -84,13 +84,13 @@ export class Player {
 		});
 	}
 
-	spotted() {
-		this.isSpotted = true;
+	disableInput() {
+		this.spotted = true;
 		this.sprite.setVelocity(0);
 	}
 
 	update() {
-		if (this.isSpotted) return;
+		if (this.spotted) return;
 
 		const { sprite, speed, joystick, cursors } = this;
 

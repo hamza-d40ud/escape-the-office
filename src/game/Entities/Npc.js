@@ -152,22 +152,29 @@ export class Npc {
 		return true;
 	}
 
+	disableInput() {
+		this.detected = true;
+		this.sprite.setVelocity(0)
+		this.steps.stop();
+		this.sprite.stop('walk');
+		this.visionGraphics.clear();
+	}
+
 	update() {
 		if (this.detected) return;
 
-		const npcPos = this.sprite;
+		const sprite = this.sprite;
+		const player = this.scene.player;
 		const playerPos = this.scene.player.sprite;
 
-		this.drawVisionCone(npcPos.x, npcPos.y, this.facingAngle, 200, 60);
+		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 200, 60);
 
 		// Check if player is in cone
-		if (this.isPlayerInCone(npcPos, playerPos, this.facingAngle, 200, 60, this.scene.objects)) {
+		if (this.isPlayerInCone(sprite, playerPos, this.facingAngle, 200, 60, this.scene.objects)) {
 			this.detectionCount++;
 		} else if (this.detectionCount > 0) {
 			this.detectionCount--;
 		}
-
-		const sprite = this.sprite;
 
 		if (this.detectionCount >= this.maxDetectionCount) {
 			this.detected = true;
@@ -180,6 +187,53 @@ export class Npc {
 				this.detectedSound.play();
 			}
 
+			const playerCenter = player.sprite.getCenter();
+			const npcCenter = sprite.getCenter();
+
+			// Vector to player
+			const direction = new Phaser.Math.Vector2(
+				playerCenter.x - npcCenter.x,
+				playerCenter.y - npcCenter.y
+			).normalize();
+
+			// Apply fast velocity
+			const sprintSpeed = 300;
+
+			sprite.setVelocity(direction.x * sprintSpeed, direction.y * sprintSpeed);
+
+			// Play sprint animation (you must define it in advance)
+			sprite.play('npc_run_fast');
+
+			// Optional: face player direction
+			sprite.setFlipX(direction.x < 0);
+
+			this.scene.time.addEvent({
+				delay: 100, // start checking soon
+				loop: true,
+				callback: () => {
+					const distance = Phaser.Math.Distance.BetweenPoints(sprite, player.sprite);
+					if (distance < 50) {
+						sprite.setVelocity(0);
+						sprite.play('npc_attack'); // or 'grab', etc.
+
+						if (!this.detectedSound.isPlaying) {
+							this.detectedSound.play();
+						}
+
+						// Optional: emit event after a delay
+						this.scene.time.delayedCall(500, () => {
+							GameManager.emit('player-caught', { npc: this });
+						});
+
+						this.steps.stop();
+
+						sprite.stop('walk');
+
+						// Stop this loop
+						return false;
+					}
+				}
+			});
 			return;
 		}
 
