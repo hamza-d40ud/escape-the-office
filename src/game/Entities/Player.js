@@ -7,17 +7,19 @@ export class Player {
 		this.speed = 135;
 		this.width = 40;
 		this.height = 53;
-		this.abilityleftUses = GameManager.abilityleftUses;
+		this.pretendBusyUsesLeft = GameManager.pretendBusyUses;
+		this.maddashUsesLeft = GameManager.madDashUses;
 
 		this.busy = false;
+		this.dashing = false;
 
 		this.sprite = scene.physics.add.sprite(x, y, 'run-right'); // Default texture atlas
 
-		this.timerText = scene.add.text(scene.scale.width - 20, 60, '', {
+
+		this.pretendBusyText = scene.add.text(scene.scale.width - 20, 60, '', {
 			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
 			stroke: '#000000', strokeThickness: 4,
 		}).setOrigin(1, 0).setScrollFactor(0);
-
 		this.phone = this.scene.add
 			.image(
 				scene.scale.width * 0.05,
@@ -25,62 +27,30 @@ export class Player {
 				'phone'
 			)
 			.setInteractive()
-			.on(
-				"pointerdown",
-				() => {
-					if (this.abilityleftUses > 0) {
-						this.busy = true;
-						this.sprite.setVelocity(0);
+			.on("pointerdown", () => this.pretendBusy())
+		scene.input.keyboard.on("keydown-" + "W", () => this.pretendBusy());
+		this.pretendBusyText.setText(`Pretend busy: ${this.pretendBusyUsesLeft} left`);
 
-						this.running.stop();
-						// Not moving
-						if (this.lastDirection === 'right') {
-							sprite.play('stand-right', true);
-						} else {
-							sprite.play('stand-left', true);
-						}
-					}
-				}
+
+		this.madDashText = scene.add.text(scene.scale.width - 20, 90, '', {
+			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+			stroke: '#000000', strokeThickness: 4,
+		}).setOrigin(1, 0).setScrollFactor(0);
+		this.maddashSprite = this.scene.add
+			.image(
+				scene.scale.width * 0.05,
+				scene.scale.height * 0.75,
+				'run'
 			)
-			.on(
-				"pointerup",
-				() => {
-					if (this.abilityleftUses > 0) {
-						this.busy = false;
-						this.abilityleftUses -= 1;
-						this.timerText.setText(`Pretend busy: ${this.abilityleftUses} left`);
-					}
-				}
-			);
-		scene.input.keyboard.on("keydown-" + "W",
-			() => {
-				if (this.abilityleftUses > 0) {
-					this.busy = true;
-					this.sprite.setVelocity(0);
+			.setInteractive()
+			.on("pointerdown", () => this.madDash())
+		scene.input.keyboard.on("keydown-" + "E", () => this.madDash());
+		this.madDashText.setText(`Mad dash: ${this.maddashUsesLeft} left`);
 
-					this.running.stop();
-					// Not moving
-					if (this.lastDirection === 'right') {
-						sprite.play('stand-right', true);
-					} else {
-						sprite.play('stand-left', true);
-					}
-				}
-			}
-		);
-
-		scene.input.keyboard.on("keyup-" + "W", () => {
-			if (this.abilityleftUses > 0) {
-				this.busy = false;
-				this.abilityleftUses -= 1;
-				this.timerText.setText(`Pretend busy: ${this.abilityleftUses} left`);
-			}
-		});
-
-		this.timerText.setText(`Pretend busy: ${this.abilityleftUses} left`);
 
 		this.scene.cameras.main.ignore([
-			this.phone
+			this.phone,
+			this.maddashSprite
 		]);
 
 		this.sprite.setDepth(1);
@@ -232,5 +202,41 @@ export class Player {
 	destroy() {
 		this.sprite.destroy();
 		if (this.joystick) this.joystick.destroy();
+	}
+
+	madDash() {
+		if (this.maddashUsesLeft > 0 && !this.dashing) {
+			this.maddashUsesLeft--;
+			this.speed *= 2;
+			this.madDashText.setText(`Mad dash: ${this.maddashUsesLeft} left`);
+			this.dashing = true
+			setTimeout(() => {
+				this.speed /= 2;
+				this.dashing = false
+			}, 1000);
+		}
+	}
+
+	pretendBusy() {
+		if (this.pretendBusyUsesLeft > 0 && !this.busy) {
+			console.log(this)
+			this.busy = true;
+			this.pretendBusyUsesLeft--;
+			this.pretendBusyText.setText(`Pretend busy: ${this.pretendBusyUsesLeft} left`);
+			this.sprite.setVelocity(0);
+
+			this.running.stop();
+
+			// Not moving
+			if (this.lastDirection === 'right') {
+				this.sprite.play('stand-right', true);
+			} else {
+				this.sprite.play('stand-left', true);
+			}
+
+			setTimeout(() => {
+				this.busy = false;
+			}, 1000);
+		}
 	}
 }

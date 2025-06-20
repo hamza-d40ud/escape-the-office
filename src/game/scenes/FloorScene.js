@@ -53,7 +53,7 @@ export class FloorScene extends Scene {
 		// Optional: fade out, play sound, delay, etc.
 		this.cameras.main.fadeOut(500);
 
-		GameManager.abilityleftUses = this.player.abilityleftUses;
+		GameManager.pretendBusyUses = this.player.pretendBusyUsesLeft;
 
 		this.time.delayedCall(600, () => {
 			this.stopAllAudio()
@@ -265,6 +265,10 @@ export class FloorScene extends Scene {
 				}
 			})
 		}
+
+		score += (this.player.pretendBusyUsesLeft * 150)
+
+		score += (this.player.maddashUsesLeft * 50)
 
 		if (gameWon) {
 			score += (this.timer.timeLeft * 2);

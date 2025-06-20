@@ -32,6 +32,7 @@ export class Preloader extends Scene {
 		this.load.image('checkbox_off', 'checkbox_off.png');
 		this.load.image('checkbox_on', 'checkbox_on.png');
 		this.load.image('phone', 'phone.png');
+		this.load.image('run', 'run.png');
 
 		this.load.audio('running', 'audio/running.mp3');
 
