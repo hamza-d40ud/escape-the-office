@@ -46,6 +46,7 @@ export class Preloader extends Scene {
 		this.load.atlas('run-right', 'animations/RunningRight.png', 'animations/RunningRight.json');
 
 		this.load.audio('bgm', 'audio/floor_1_bg.wav');
+		this.load.audio('rida_1', 'audio/rida_1.mp3');
 	}
 
 	create() {

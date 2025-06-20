@@ -8,6 +8,7 @@ export class Npc {
 		this.width = 64;
 		this.height = 64;
 		this.pathPoints = pathPoints;
+		this.detected = false;
 		this.currentTargetIndex = 0;
 		this.facingAngle = 0;       // current facing angle in degrees
 		this.targetAngle = 0;       // desired direction
@@ -33,6 +34,23 @@ export class Npc {
 
 		this.visionGraphics = this.scene.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0.25 } });
 		this.visionGraphics.setDepth(1); // draw below NPC
+
+		this.detectedSound = scene.sound.add('rida_1', {
+			volume: 0.5,
+			loop: false,
+			spatial: false
+		});
+
+		this.detectedSound.once('complete', () => {
+			GameManager.emit('player-spotted-ended', { npc: this });
+		});
+
+		this.scene.input.once('pointerdown', () => {
+			if (this.detectedSound.isPlaying) {
+				this.detectedSound.stop();
+				GameManager.emit('player-spotted-ended', { npc: this });
+			}
+		});
 
 		this.steps = scene.sound.add('steps', {
 			volume: 0.5,
@@ -135,6 +153,8 @@ export class Npc {
 	}
 
 	update() {
+		if (this.detected) return;
+
 		const npcPos = this.sprite;
 		const playerPos = this.scene.player.sprite;
 
@@ -147,14 +167,25 @@ export class Npc {
 			this.detectionCount--;
 		}
 
+		const sprite = this.sprite;
+
 		if (this.detectionCount >= this.maxDetectionCount) {
+			this.detected = true;
+
+			sprite.setVelocity(0, 0);
+
 			GameManager.emit('player-spotted', { npc: this });
+
+			if (!this.detectedSound.isPlaying) {
+				this.detectedSound.play();
+			}
+
+			return;
 		}
 
 		if (this.pathPoints.length === 0) return;
 
 		const target = this.pathPoints[this.currentTargetIndex];
-		const sprite = this.sprite;
 
 		const dx = target.x - sprite.x;
 		const dy = target.y - sprite.y;

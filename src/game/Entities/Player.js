@@ -13,6 +13,8 @@ export class Player {
 		this.sprite.setDisplaySize(this.width, this.height);
 		this.sprite.setBodySize(230, 430)
 
+		this.isSpotted = false;
+
 		this.sprite.anims.create({
 			key: 'stand-right',
 			frames: this.scene.anims.generateFrameNames('stand-right', {
@@ -82,7 +84,14 @@ export class Player {
 		});
 	}
 
+	spotted() {
+		this.isSpotted = true;
+		this.sprite.setVelocity(0);
+	}
+
 	update() {
+		if (this.isSpotted) return;
+
 		const { sprite, speed, joystick, cursors } = this;
 
 		let vx = 0;

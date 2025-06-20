@@ -27,6 +27,11 @@ export class FloorScene extends Scene {
 		GameManager.once('player-spotted', () => {
 			console.log('Player spotted! Switching to GameOverScene...');
 			this.stopAllAudio()
+			this.player.spotted();
+		});
+
+		GameManager.once('player-spotted-ended', () => {
+			this.stopAllAudio()
 			this.scene.start('GameOver');
 		});
 
