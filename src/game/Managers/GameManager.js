@@ -55,6 +55,18 @@ var floors = [
 		],
 		timer: 2 * 60,
 		backgroundmusic: 'bgm',
+		objectives: [
+			{
+				title: "Get your keys",
+				type: 1,
+				key: "keys",
+			},
+			{
+				title: "Clock out",
+				type: 2,
+				key: "clock_out",
+			}
+		]
 	}
 ];
 
@@ -68,11 +80,13 @@ class GameManager extends Phaser.Events.EventEmitter {
 	}
 
 	startGame(scene) {
+		console.log('starting new game')
 		this.currentFloor = 1;
 		scene.scene.start('FloorScene', { floor: 1 });
 	}
 
 	nextFloor() {
+		console.log(this.currentFloor, this.maxFloors)
 		if (this.currentFloor < this.maxFloors) {
 			this.currentFloor++;
 			this.emit('floor-started', { floor: this.currentFloor });

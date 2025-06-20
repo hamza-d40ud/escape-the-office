@@ -29,6 +29,8 @@ export class Preloader extends Scene {
 		this.load.image('mainmenu', 'Main.png');
 
 		this.load.image('logo', 'logo.png');
+		this.load.image('checkbox_off', 'checkbox_off.png');
+		this.load.image('checkbox_on', 'checkbox_on.png');
 
 		this.load.audio('running', 'audio/running.mp3');
 

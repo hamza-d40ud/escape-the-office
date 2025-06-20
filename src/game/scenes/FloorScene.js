@@ -7,6 +7,8 @@ import GameManager from '../Managers/GameManager.js';
 
 export class FloorScene extends Scene {
 	npcs = []
+	objectives = []
+	zones = []
 
 	constructor() {
 		super('FloorScene');
@@ -60,6 +62,11 @@ export class FloorScene extends Scene {
 		console.log(data, this.floor, floorData);
 
 		this.npcs = [];
+		this.objectives = [];
+
+		if (floorData.objectives) {
+			this.objectives = floorData.objectives.map(x => ({ ...x, complete: false }))
+		}
 
 		this.map = this.make.tilemap({ key: floorData.mapkey });
 
@@ -119,19 +126,58 @@ export class FloorScene extends Scene {
 			return obj.name === 'exit'
 		});
 
+
+		this.objectives.forEach(obj => {
+			console.log(this.map.objects)
+			const objectiveObject = this.map.findObject('objects', objective => {
+				return objective.name === obj.key
+			});
+
+			console.log(obj, objectiveObject);
+
+			if (objectiveObject) {
+				var zone = this.add.zone(objectiveObject.x, objectiveObject.y, objectiveObject.width, objectiveObject.height);
+				this.zones.push(zone)
+				this.physics.add.existing(zone);
+				zone.body.setAllowGravity(false);
+				zone.body.setImmovable(true);
+				this.physics.add.overlap(this.player.sprite, zone, () => {
+					this.objectives.forEach(x => {
+						if (x.key === obj.key && !x.complete) {
+							x.complete = true;
+						}
+					})
+				});
+			}
+		})
+
 		this.exitZone = this.add.zone(exitObject.x, exitObject.y, exitObject.width, exitObject.height);
 		this.physics.add.existing(this.exitZone);
 		this.exitZone.body.setAllowGravity(false);
 		this.exitZone.body.setImmovable(true);
 
 		this.physics.add.overlap(this.player.sprite, this.exitZone, () => {
-			GameManager.emit('floor-cleared');
+			var complete = true;
+
+			if (this.objectives.length > 0) {
+				for (var i = 0; i < this.objectives.length; i++) {
+					if (!this.objectives[i].complete) {
+						complete = false;
+						break;
+					}
+				}
+			}
+
+			if (complete) {
+				GameManager.emit('floor-cleared');
+			}
 		});
 	}
 
 	update() {
 		this.player.update()
 		this.npcs.forEach(npc => npc.update())
+		this.renderUi()
 	}
 
 	stopAllAudio() {
@@ -140,6 +186,24 @@ export class FloorScene extends Scene {
 
 	destroy() {
 		this.bgm.stop();
+	}
+
+	renderUi() {
+		if (this.objectives) {
+			this.objectives.forEach((obj, i) => {
+				if (obj.complete) {
+					this.add.image(100, (i + 1) * 100, 'checkbox_on').setAlpha(1);
+				} else {
+					this.add.image(100, (i + 1) * 100, 'checkbox_off').setAlpha(1);
+				}
+
+				this.add.text(200, (i + 1) * 100, obj.title, {
+					fontFamily: 'Arial Black', fontSize: 13, color: '#ffffff',
+					stroke: '#000000', strokeThickness: 8,
+					align: 'center'
+				}).setOrigin(0.5);
+			})
+		}
 	}
 }
 
