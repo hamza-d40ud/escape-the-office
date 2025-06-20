@@ -191,7 +191,7 @@ class GameManager extends Phaser.Events.EventEmitter {
 			score: this.score
 		};
 	
-		fetch('http://159.89.49.190:3000/api/v1/leaderboard/submit-attempt', {
+		fetch('https://159.89.49.190:3000/api/v1/leaderboard/submit-attempt', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

@@ -25,7 +25,7 @@ export class LeaderboardScene extends Scene {
         }).setOrigin(0.5);
 
         // Fetch leaderboard data
-        fetch('http://159.89.49.190:3000/api/v1/leaderboard/')
+        fetch('https://159.89.49.190:3000/api/v1/leaderboard/')
             .then(response => response.json())
             .then(data => {
                 loadingText.destroy();
