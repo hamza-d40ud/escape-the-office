@@ -35,15 +35,16 @@ export class Preloader extends Scene {
 		this.load.audio('steps', 'audio/steps.wav');
 
 		this.load.image('tiles', 'maps/tilemap.png');
-		this.load.tilemapTiledJSON('map', 'maps/level1.json');
+		this.load.tilemapTiledJSON('floor1', 'maps/floor1.json');
+		this.load.tilemapTiledJSON('floor2', 'maps/floor2.json');
 
-		this.load.atlas('soldier', 'animations/soldier.png', 'animations/soldier.json');
+		this.load.atlas('soldier', 'animations/soldier/soldier.png', 'animations/soldier/soldier.json');
 
 
-		this.load.atlas('stand-right', 'animations/StandingRight.png', 'animations/StandingRight.json');
-		this.load.atlas('stand-left', 'animations/StandingLeft.png', 'animations/StandingLeft.json');
-		this.load.atlas('run-left', 'animations/RunningLeft.png', 'animations/RunningLeft.json');
-		this.load.atlas('run-right', 'animations/RunningRight.png', 'animations/RunningRight.json');
+		this.load.atlas('stand-right', 'animations/mainPlayer/StandingRight.png', 'animations/mainPlayer/StandingRight.json');
+		this.load.atlas('stand-left', 'animations/mainPlayer/StandingLeft.png', 'animations/mainPlayer/StandingLeft.json');
+		this.load.atlas('run-left', 'animations/mainPlayer/RunningLeft.png', 'animations/mainPlayer/RunningLeft.json');
+		this.load.atlas('run-right', 'animations/mainPlayer/RunningRight.png', 'animations/mainPlayer/RunningRight.json');
 
 		this.load.audio('bgm', 'audio/floor_1_bg.wav');
 		this.load.audio('rida_1', 'audio/rida_1.mp3');

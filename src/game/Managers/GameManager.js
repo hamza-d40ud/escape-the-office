@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 
 var floors = [
 	{
-		mapkey: 'map',
+		mapkey: 'floor1',
 		player: {
 			x: 100,
 			y: 100,
@@ -30,10 +30,10 @@ var floors = [
 		backgroundmusic: 'bgm',
 	},
 	{
-		mapkey: 'map',
+		mapkey: 'floor2',
 		player: {
-			x: 400,
-			y: 600,
+			x: 100,
+			y: 100,
 		},
 		npcs: [
 			{

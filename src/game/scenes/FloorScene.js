@@ -96,6 +96,8 @@ export class FloorScene extends Scene {
 
 		this.cameras.main.setZoom(zoom);
 
+		this.cameras.main.roundPixels = true;
+
 		this.cameras.main.ignore([
 			this.player.joystickBase,
 			this.player.joystickThumb

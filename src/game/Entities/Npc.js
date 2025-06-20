@@ -15,7 +15,7 @@ export class Npc {
 		this.angleLerpSpeed = 5;
 		this.sprite = scene.physics.add.sprite(x, y, 'soldier');
 		this.detectionCount = 0;
-		this.maxDetectionCount = 70;
+		this.maxDetectionCount = 20;
 
 		this.sprite.anims.create({
 			key: 'walk',
