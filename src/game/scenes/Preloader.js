@@ -38,9 +38,10 @@ export class Preloader extends Scene {
 
 		this.load.audio('steps', 'audio/steps.wav');
 
-		this.load.image('tiles', 'maps/tilemap.png');
+		this.load.image('tiles', 'maps/spritesheet.png');
 		this.load.tilemapTiledJSON('floor1', 'maps/floor1.json');
 		this.load.tilemapTiledJSON('floor2', 'maps/floor2.json');
+		this.load.tilemapTiledJSON('test_floor', 'maps/testfloor.json');
 
 		this.load.atlas('soldier', 'animations/soldier/soldier.png', 'animations/soldier/soldier.json');
 

@@ -5,8 +5,8 @@ export class Npc {
 		this.wallLayer = wallLayer;
 		this.scene = scene;
 		this.speed = 80;
-		this.width = 64;
-		this.height = 64;
+		this.width = 210;
+		this.height = 210;
 		this.pathPoints = pathPoints;
 		this.detected = false;
 		this.currentTargetIndex = 0;
@@ -182,7 +182,7 @@ export class Npc {
 		const sprite = this.sprite;
 		const player = this.scene.player;
 
-		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 200, 60);
+		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 400, 60);
 
 		// Check if player is in cone
 		if (this.isPlayerInCone(sprite, this.scene.player, this.facingAngle, 400, 60, this.scene.objects)) {

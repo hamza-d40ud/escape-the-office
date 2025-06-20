@@ -13,6 +13,6 @@ export default defineConfig({
     },
     server: {
         port: 8080,
-        allowedHosts: ['localhost', 'a708-16-170-48-23.ngrok-free.app']
+        allowedHosts: ['localhost', '2208-16-170-48-23.ngrok-free.app']
     }
 });

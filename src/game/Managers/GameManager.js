@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 
 var floors = [
 	{
-		mapkey: 'floor1',
+		mapkey: 'test_floor',
 		player: {
 			x: 100,
 			y: 100,

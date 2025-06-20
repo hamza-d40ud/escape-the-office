@@ -116,7 +116,7 @@ export class FloorScene extends Scene {
 
 		this.cameras.main.startFollow(this.player.sprite);
 
-		const desiredHeight = 250;
+		const desiredHeight = 600;
 
 		const zoom = this.scale.height / desiredHeight;
 

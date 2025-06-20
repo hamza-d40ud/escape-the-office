@@ -13,8 +13,8 @@ import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-p
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config = {
 	type: AUTO,
-	width: 1920,
-	height: 1072,
+	width: 3840,
+	height: 2160,
 	parent: 'game-container',
 	backgroundColor: '#028af8',
 	scale: {

@@ -4,9 +4,9 @@ import GameManager from "../Managers/GameManager";
 export class Player {
 	constructor(scene, x, y) {
 		this.scene = scene;
-		this.speed = 135;
-		this.width = 40;
-		this.height = 53;
+		this.speed = 300;
+		this.width = 159;
+		this.height = 210;
 		this.pretendBusyUsesLeft = GameManager.pretendBusyUses;
 		this.maddashUsesLeft = GameManager.madDashUses;
 
