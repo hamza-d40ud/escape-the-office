@@ -1,7 +1,8 @@
 import GameManager from '../Managers/GameManager.js';
 
 export class Npc {
-	constructor(scene, x, y, pathPoints = []) {
+	constructor(scene, wallLayer, x, y, pathPoints = []) {
+		this.wallLayer = wallLayer;
 		this.scene = scene;
 		this.speed = 80;
 		this.width = 64;
@@ -13,7 +14,7 @@ export class Npc {
 		this.angleLerpSpeed = 5;
 		this.sprite = scene.physics.add.sprite(x, y, 'soldier');
 		this.detectionCount = 0;
-		this.maxDetectionCount = 60;
+		this.maxDetectionCount = 70;
 
 		this.sprite.anims.create({
 			key: 'walk',
@@ -43,6 +44,28 @@ export class Npc {
 	drawVisionCone(originX, originY, angleDeg, radius, fovDeg) {
 		this.visionGraphics.clear();
 
+		const ratio = Phaser.Math.Clamp(this.detectionCount / this.maxDetectionCount, 0, 1);
+
+		let r = 255, g = 255, b = 255; // start with white
+
+		if (ratio <= 0.5) {
+			// Interpolate from white to yellow
+			const t = ratio / 0.5;
+			r = 255;
+			g = 255;
+			b = Math.floor(255 * (1 - t)); // 255 → 0
+		} else {
+			// Interpolate from yellow to red
+			const t = (ratio - 0.5) / 0.5;
+			r = 255;
+			g = Math.floor(255 * (1 - t)); // 255 → 0
+			b = 0;
+		}
+
+		const colorHex = (r << 16) | (g << 8) | b;
+
+		this.visionGraphics.fillStyle(colorHex, 0.3);
+
 		const angleRad = Phaser.Math.DegToRad(angleDeg);
 		const fovRad = Phaser.Math.DegToRad(fovDeg);
 
@@ -52,9 +75,25 @@ export class Npc {
 		this.visionGraphics.beginPath();
 		this.visionGraphics.moveTo(originX, originY);
 
-		for (let a = startAngle; a <= endAngle; a += 0.1) {
-			const x = originX + radius * Math.cos(a);
-			const y = originY + radius * Math.sin(a);
+		// STEP 1: For each ray in the cone
+		for (let a = startAngle; a <= endAngle; a += 0.05) {
+			const stepSize = 4; // smaller = more accurate
+			let x = originX;
+			let y = originY;
+
+			for (let r = 0; r < radius; r += stepSize) {
+				x = originX + r * Math.cos(a);
+				y = originY + r * Math.sin(a);
+
+				// Check tile at this point
+				const tile = this.wallLayer.getTileAtWorldXY(x, y, true);
+
+				if (tile && tile.collides) {
+					// Wall hit → stop line here
+					break;
+				}
+			}
+
 			this.visionGraphics.lineTo(x, y);
 		}
 
@@ -68,14 +107,31 @@ export class Npc {
 		const dy = player.y - npc.y;
 		const distance = Math.hypot(dx, dy);
 
+		// Outside cone radius
 		if (distance > coneRadius) return false;
 
+		// Check cone angle
 		const angleToPlayer = Phaser.Math.RadToDeg(Math.atan2(dy, dx));
 		const npcFacing = coneAngleDeg;
-
 		const deltaAngle = Phaser.Math.Angle.WrapDegrees(angleToPlayer - npcFacing);
 
-		return Math.abs(deltaAngle) < fovDeg / 2;
+		if (Math.abs(deltaAngle) > fovDeg / 2) return false;
+
+		const npcPos = new Phaser.Math.Vector2(npc.x, npc.y);
+
+		const playerPos = new Phaser.Math.Vector2(player.x, player.y);
+
+		const ray = new Phaser.Geom.Line(npcPos.x, npcPos.y, playerPos.x, playerPos.y);
+
+		const blockingTiles = this.wallLayer.getTilesWithinShape(ray, {
+			isColliding: true
+		});
+
+		if (blockingTiles.length > 0) {
+			return false;
+		}
+
+		return true;
 	}
 
 	update() {
@@ -85,7 +141,7 @@ export class Npc {
 		this.drawVisionCone(npcPos.x, npcPos.y, this.facingAngle, 200, 60);
 
 		// Check if player is in cone
-		if (this.isPlayerInCone(npcPos, playerPos, this.facingAngle, 200, 60)) {
+		if (this.isPlayerInCone(npcPos, playerPos, this.facingAngle, 200, 60, this.scene.objects)) {
 			this.detectionCount++;
 		} else if (this.detectionCount > 0) {
 			this.detectionCount--;
