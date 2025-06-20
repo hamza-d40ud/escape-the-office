@@ -178,7 +178,9 @@ export class FloorScene extends Scene {
 			}
 
 			if (complete) {
-				GameManager.emit('floor-cleared');
+				let score = this.calculateScore();
+
+				GameManager.emit('floor-cleared', { score });
 			}
 		});
 		this.uiContainer = this.add.container(0, 0);
@@ -246,6 +248,22 @@ export class FloorScene extends Scene {
 				}
 			});
 		}
+	}
+
+	calculateScore() {
+		let score = 0;
+
+		if (this.objectives && this.uiElements.checkboxes.length > 0) {
+			this.objectives.forEach((obj) => {
+				if (obj.complete) {
+					score += obj.score;
+				}
+			})
+		}
+
+		score += (this.timer.timeLeft * 2);
+
+		return score;
 	}
 }
 

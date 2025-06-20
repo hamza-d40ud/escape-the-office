@@ -98,14 +98,20 @@ class GameManager extends Phaser.Events.EventEmitter {
 	constructor() {
 		super()
 
+		this.score = 0;
 		this.currentFloor = 0;
 		this.maxFloors = floors.length;
 		this.currentScene = null; // to hold active scene reference
+
+		this.on('floor-cleared', (data) => {
+			this.score += data.score
+		})
 	}
 
 	startGame(scene) {
 		console.log('starting new game')
 		this.currentFloor = 1;
+		this.score = 0;
 		scene.scene.start('FloorScene', { floor: 1 });
 	}
 
