@@ -6,12 +6,16 @@ import { Npc } from '../Entities/Npc';
 import GameManager from '../Managers/GameManager.js';
 
 export class FloorScene extends Scene {
-	npcs = []
-	objectives = []
-	zones = []
-
 	constructor() {
 		super('FloorScene');
+		this.npcs = []
+		this.objectives = []
+		this.zones = []
+		this.uiElements = {
+			checkboxes: [],
+			texts: []
+		};
+
 	}
 
 	create() {
@@ -172,6 +176,10 @@ export class FloorScene extends Scene {
 				GameManager.emit('floor-cleared');
 			}
 		});
+		this.uiContainer = this.add.container(0, 0);
+		this.uiContainer.setScrollFactor(0); // Essential for fixed UI
+
+		this.createUiElements()
 	}
 
 	update() {
@@ -188,21 +196,45 @@ export class FloorScene extends Scene {
 		this.bgm.stop();
 	}
 
-	renderUi() {
+	createUiElements() {
 		if (this.objectives) {
 			this.objectives.forEach((obj, i) => {
-				if (obj.complete) {
-					this.add.image(100, (i + 1) * 100, 'checkbox_on').setAlpha(1);
-				} else {
-					this.add.image(100, (i + 1) * 100, 'checkbox_off').setAlpha(1);
-				}
+				const checkbox = this.add.image(100, (i + 1) * 100, 'checkbox_off').setAlpha(1);
+				checkbox.setOrigin(0.5); // Set origin for consistency
 
-				this.add.text(200, (i + 1) * 100, obj.title, {
-					fontFamily: 'Arial Black', fontSize: 13, color: '#ffffff',
+				const text = this.add.text(220, (i + 1) * 100, obj.title, {
+					fontFamily: 'Arial Black', fontSize: 22, color: '#ffffff',
 					stroke: '#000000', strokeThickness: 8,
 					align: 'center'
 				}).setOrigin(0.5);
-			})
+
+				this.uiContainer.add([checkbox, text]); // Add to the container
+
+				this.uiElements.checkboxes.push(checkbox);
+				this.uiElements.texts.push(text);
+			});
+		}
+	}
+
+	renderUi() {
+		if (this.objectives && this.uiElements.checkboxes.length > 0) {
+			this.objectives.forEach((obj, i) => {
+				const checkbox = this.uiElements.checkboxes[i];
+				const text = this.uiElements.texts[i];
+
+				// Update the texture of the checkbox
+				checkbox.setTexture(obj.complete ? 'checkbox_on' : 'checkbox_off');
+
+				// If the text itself can change, update it here:
+				// text.setText(obj.title); // Only if title can change dynamically
+
+				// You might also want to change text color or style if an objective is complete
+				if (obj.complete) {
+					text.setColor('#00ff00'); // Green for complete
+				} else {
+					text.setColor('#ffffff'); // White for incomplete
+				}
+			});
 		}
 	}
 }
