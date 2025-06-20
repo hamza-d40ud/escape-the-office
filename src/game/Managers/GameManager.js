@@ -15,7 +15,8 @@ var floors = [
 				path: [
 					{ x: 300, y: 500 },
 					{ x: 200, y: 300 },
-				]
+				],
+				sound: 'rida_1'
 			},
 			{
 				x: 200,
@@ -23,7 +24,8 @@ var floors = [
 				path: [
 					{ x: 200, y: 100 },
 					{ x: 200, y: 300 },
-				]
+				],
+				sound: 'rida_1'
 			}
 		],
 		timer: 3 * 60,
@@ -42,7 +44,8 @@ var floors = [
 				path: [
 					{ x: 300, y: 500 },
 					{ x: 200, y: 300 },
-				]
+				],
+				sound: 'rida_1'
 			},
 			{
 				x: 200,
@@ -50,7 +53,8 @@ var floors = [
 				path: [
 					{ x: 200, y: 100 },
 					{ x: 200, y: 300 },
-				]
+				],
+				sound: 'rida_1'
 			}
 		],
 		timer: 2 * 60,

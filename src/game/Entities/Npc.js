@@ -1,7 +1,7 @@
 import GameManager from '../Managers/GameManager.js';
 
 export class Npc {
-	constructor(scene, wallLayer, x, y, pathPoints = []) {
+	constructor(scene, wallLayer, x, y, sound, pathPoints = []) {
 		this.wallLayer = wallLayer;
 		this.scene = scene;
 		this.speed = 80;
@@ -14,8 +14,12 @@ export class Npc {
 		this.targetAngle = 0;       // desired direction
 		this.angleLerpSpeed = 5;
 		this.sprite = scene.physics.add.sprite(x, y, 'soldier');
+		
 		this.detectionCount = 0;
-		this.maxDetectionCount = 20;
+		this.maxDetectionCount = 100;
+		
+		this.soundCount = 0;
+		this.maxSoundCount = 4;
 
 		this.sprite.anims.create({
 			key: 'walk',
@@ -35,7 +39,7 @@ export class Npc {
 		this.visionGraphics = this.scene.add.graphics({ fillStyle: { color: 0xffffff, alpha: 0.25 } });
 		this.visionGraphics.setDepth(1); // draw below NPC
 
-		this.detectedSound = scene.sound.add('rida_1', {
+		this.detectedSound = scene.sound.add(sound, {
 			volume: 0.5,
 			loop: false,
 			spatial: false
@@ -170,22 +174,30 @@ export class Npc {
 		this.drawVisionCone(sprite.x, sprite.y, this.facingAngle, 200, 60);
 
 		// Check if player is in cone
+		if (this.isPlayerInCone(sprite, playerPos, this.facingAngle, 400, 60, this.scene.objects)) {
+			this.soundCount++;
+		} else if (this.soundCount > 0) {
+			this.soundCount--;
+		}
+
 		if (this.isPlayerInCone(sprite, playerPos, this.facingAngle, 200, 60, this.scene.objects)) {
 			this.detectionCount++;
 		} else if (this.detectionCount > 0) {
 			this.detectionCount--;
 		}
 
+		if (this.soundCount >= this.maxSoundCount){
+			if (!this.detectedSound.isPlaying) {
+				this.detectedSound.play();
+			}
+		}
+		
 		if (this.detectionCount >= this.maxDetectionCount) {
 			this.detected = true;
 
 			sprite.setVelocity(0, 0);
 
 			GameManager.emit('player-spotted', { npc: this });
-
-			if (!this.detectedSound.isPlaying) {
-				this.detectedSound.play();
-			}
 
 			const playerCenter = player.sprite.getCenter();
 			const npcCenter = sprite.getCenter();

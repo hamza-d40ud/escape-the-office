@@ -86,7 +86,7 @@ export class FloorScene extends Scene {
 		const npc_cones = []
 
 		floorData.npcs.forEach((npc) => {
-			let npcToPush = new Npc(this, objectsLayer, npc.x, npc.y, npc.path);
+			let npcToPush = new Npc(this, objectsLayer, npc.x, npc.y, npc.sound, npc.path);
 			this.npcs.push(npcToPush);
 			npc_players.push(npcToPush.sprite)
 			this.physics.add.collider(npcToPush.sprite, objectsLayer)
