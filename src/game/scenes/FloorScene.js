@@ -15,7 +15,6 @@ export class FloorScene extends Scene {
 			checkboxes: [],
 			texts: []
 		};
-
 	}
 
 	create() {
@@ -59,11 +58,17 @@ export class FloorScene extends Scene {
 	}
 
 	init(data) {
+		this.npcs = []
+		this.objectives = []
+		this.zones = []
+		this.uiElements = {
+			checkboxes: [],
+			texts: []
+		};
+
 		this.floor = data.floor || GameManager.floor;
 
 		let floorData = GameManager.getFloorData(this.floor);
-
-		console.log(data, this.floor, floorData);
 
 		this.npcs = [];
 		this.objectives = [];
@@ -165,7 +170,7 @@ export class FloorScene extends Scene {
 
 			if (this.objectives.length > 0) {
 				for (var i = 0; i < this.objectives.length; i++) {
-					if (!this.objectives[i].complete) {
+					if (!this.objectives[i].complete && this.objectives[i].required) {
 						complete = false;
 						break;
 					}
@@ -202,14 +207,19 @@ export class FloorScene extends Scene {
 				const checkbox = this.add.image(100, (i + 1) * 100, 'checkbox_off').setAlpha(1);
 				checkbox.setOrigin(0.5); // Set origin for consistency
 
-				const text = this.add.text(220, (i + 1) * 100, obj.title, {
+				var textContent = obj.title;
+
+				if (!obj.required) {
+					textContent += " (Optional)"
+				}
+
+				const text = this.add.text(140, (i + 1) * 100, textContent, {
 					fontFamily: 'Arial Black', fontSize: 22, color: '#ffffff',
 					stroke: '#000000', strokeThickness: 8,
-					align: 'center'
-				}).setOrigin(0.5);
+					align: 'left'
+				}).setOrigin(0, 0.5);
 
 				this.uiContainer.add([checkbox, text]); // Add to the container
-
 				this.uiElements.checkboxes.push(checkbox);
 				this.uiElements.texts.push(text);
 			});

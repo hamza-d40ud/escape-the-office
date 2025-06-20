@@ -30,6 +30,15 @@ var floors = [
 		],
 		timer: 3 * 60,
 		backgroundmusic: 'bgm',
+		objectives: [
+			{
+				title: "Get your keys",
+				type: 1,
+				key: "keys",
+				required: true,
+				score: 100,
+			}
+		],
 	},
 	{
 		mapkey: 'floor2',
@@ -64,11 +73,22 @@ var floors = [
 				title: "Get your keys",
 				type: 1,
 				key: "keys",
+				required: true,
+				score: 100,
 			},
 			{
 				title: "Clock out",
 				type: 2,
 				key: "clock_out",
+				required: true,
+				score: 100,
+			},
+			{
+				title: "Drink water",
+				type: 3,
+				key: "water",
+				required: false,
+				score: 300,
 			}
 		]
 	}
