@@ -59,6 +59,7 @@ export class FloorScene extends Scene {
 		this.cameras.main.fadeOut(500);
 
 		GameManager.pretendBusyUses = this.player.pretendBusyUsesLeft;
+		GameManager.madDashUses = this.player.maddashUsesLeft;
 
 		this.time.delayedCall(600, () => {
 			this.stopAllAudio()

@@ -16,6 +16,10 @@ export class Player {
 		this.sprite = scene.physics.add.sprite(x, y, 'run-right'); // Default texture atlas
 
 
+		this.busyTone = this.scene.sound.add("vocal_cute_angry", {
+			loop: false,
+			volume: 0.4 // or adjust to taste
+		});
 		this.pretendBusyText = scene.add.text(scene.scale.width - 20, 60, '', {
 			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
 			stroke: '#000000', strokeThickness: 4,
@@ -32,6 +36,10 @@ export class Player {
 		this.pretendBusyText.setText(`Pretend busy: ${this.pretendBusyUsesLeft} left`);
 
 
+		this.dashingTone = this.scene.sound.add("dashing", {
+			loop: false,
+			volume: 0.4 // or adjust to taste
+		});
 		this.madDashText = scene.add.text(scene.scale.width - 20, 90, '', {
 			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
 			stroke: '#000000', strokeThickness: 4,
@@ -210,6 +218,9 @@ export class Player {
 			this.speed *= 2;
 			this.madDashText.setText(`Mad dash: ${this.maddashUsesLeft} left`);
 			this.dashing = true
+			if (!this.dashingTone.isPlaying) {
+				this.dashingTone.play()
+			}
 			setTimeout(() => {
 				this.speed /= 2;
 				this.dashing = false
@@ -232,6 +243,10 @@ export class Player {
 				this.sprite.play('stand-right', true);
 			} else {
 				this.sprite.play('stand-left', true);
+			}
+
+			if (!this.busyTone.isPlaying) {
+				this.busyTone.play()
 			}
 
 			setTimeout(() => {

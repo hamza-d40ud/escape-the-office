@@ -34,7 +34,7 @@ export class Preloader extends Scene {
 		this.load.image('phone', 'phone.png');
 		this.load.image('run', 'run.png');
 
-		this.load.audio('running', 'audio/running.mp3');
+		this.load.audio('running', 'audio/running.ogg');
 
 		this.load.audio('steps', 'audio/steps.wav');
 
@@ -53,6 +53,8 @@ export class Preloader extends Scene {
 		this.load.audio('bgm', 'audio/floor_1_bg.wav');
 		this.load.audio('rida_1', 'audio/rida_1.mp3');
 		this.load.audio('success', 'audio/success.ogg');
+		this.load.audio('vocal_cute_angry', 'audio/vocal_cute_angry.ogg');
+		this.load.audio('dashing', 'audio/dashing.ogg');
 	}
 
 	create() {
