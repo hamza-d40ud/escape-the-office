@@ -218,7 +218,7 @@ export class FloorScene extends Scene {
 	createUiElements() {
 		if (this.objectives) {
 			this.objectives.forEach((obj, i) => {
-				const checkbox = this.add.image(100, (i + 1) * 100, 'checkbox_off').setAlpha(1);
+				const checkbox = this.add.image(100, (i + 1) * 130, 'checkbox_off').setAlpha(1);
 				checkbox.setOrigin(0.5); // Set origin for consistency
 
 				var textContent = obj.title;
@@ -227,8 +227,8 @@ export class FloorScene extends Scene {
 					textContent += " (Optional)"
 				}
 
-				const text = this.add.text(140, (i + 1) * 100, textContent, {
-					fontFamily: 'Arial Black', fontSize: 22, color: '#ffffff',
+				const text = this.add.text(140, (i + 1) * 130, textContent, {
+					fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
 					stroke: '#000000', strokeThickness: 8,
 					align: 'left'
 				}).setOrigin(0, 0.5);

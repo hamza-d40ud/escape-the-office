@@ -20,8 +20,8 @@ export class Player {
 			loop: false,
 			volume: 0.4 // or adjust to taste
 		});
-		this.pretendBusyText = scene.add.text(scene.scale.width - 20, 60, '', {
-			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+		this.pretendBusyText = scene.add.text(scene.scale.width - 20, 80, '', {
+			fontFamily: 'Arial Black', fontSize: 52, color: '#ffffff',
 			stroke: '#000000', strokeThickness: 4,
 		}).setOrigin(1, 0).setScrollFactor(0);
 		this.phone = this.scene.add
@@ -30,6 +30,7 @@ export class Player {
 				scene.scale.height * 0.65,
 				'phone'
 			)
+			.setScale(2) // Doubles the size of the sprite
 			.setInteractive()
 			.on("pointerdown", () => this.pretendBusy())
 		scene.input.keyboard.on("keydown-" + "W", () => this.pretendBusy());
@@ -40,8 +41,8 @@ export class Player {
 			loop: false,
 			volume: 0.4 // or adjust to taste
 		});
-		this.madDashText = scene.add.text(scene.scale.width - 20, 90, '', {
-			fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+		this.madDashText = scene.add.text(scene.scale.width - 20, 130, '', {
+			fontFamily: 'Arial Black', fontSize: 52, color: '#ffffff',
 			stroke: '#000000', strokeThickness: 4,
 		}).setOrigin(1, 0).setScrollFactor(0);
 		this.maddashSprite = this.scene.add
@@ -50,6 +51,7 @@ export class Player {
 				scene.scale.height * 0.75,
 				'run'
 			)
+			.setScale(2) // Doubles the size of the sprite
 			.setInteractive()
 			.on("pointerdown", () => this.madDash())
 		scene.input.keyboard.on("keydown-" + "E", () => this.madDash());
