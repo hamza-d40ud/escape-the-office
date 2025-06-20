@@ -103,6 +103,9 @@ class GameManager extends Phaser.Events.EventEmitter {
 		this.maxFloors = floors.length;
 		this.currentScene = null; // to hold active scene reference
 
+		this.on('game-over', (data) => {
+			this.score += data.score
+		})
 		this.on('floor-cleared', (data) => {
 			this.score += data.score
 		})

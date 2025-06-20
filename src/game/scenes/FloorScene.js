@@ -38,7 +38,9 @@ export class FloorScene extends Scene {
 
 		GameManager.once('player-spotted-ended', () => {
 			this.stopAllAudio()
-			this.scene.start('GameOver');
+			var score = this.calculateScore(false)
+			GameManager.emit('floor-cleared', { score });
+			this.scene.start('GameOver', { score });
 		});
 
 		GameManager.once('floor-started', (data) => {
@@ -178,11 +180,12 @@ export class FloorScene extends Scene {
 			}
 
 			if (complete) {
-				let score = this.calculateScore();
+				let score = this.calculateScore(true);
 
 				GameManager.emit('floor-cleared', { score });
 			}
 		});
+
 		this.uiContainer = this.add.container(0, 0);
 		this.uiContainer.setScrollFactor(0); // Essential for fixed UI
 
@@ -250,7 +253,7 @@ export class FloorScene extends Scene {
 		}
 	}
 
-	calculateScore() {
+	calculateScore(gameWon) {
 		let score = 0;
 
 		if (this.objectives && this.uiElements.checkboxes.length > 0) {
@@ -261,7 +264,9 @@ export class FloorScene extends Scene {
 			})
 		}
 
-		score += (this.timer.timeLeft * 2);
+		if (gameWon) {
+			score += (this.timer.timeLeft * 2);
+		}
 
 		return score;
 	}
