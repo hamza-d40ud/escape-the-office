@@ -79,7 +79,6 @@ export class FloorScene extends Scene {
 		this.floor = data.floor || GameManager.floor;
 
 		let floorData = GameManager.getFloorData(this.floor);
-		console.log(floorData)
 
 		this.npcs = [];
 		this.objectives = [];

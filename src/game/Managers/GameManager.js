@@ -62,9 +62,9 @@ var floors = [
 		},
 		npcs: [
 			{
-				sound: 'Karam',
-				npc_name: 'karam',
-				video_name: 'karam_cutscene'
+				sound: 'Yasser',
+				npc_name: 'yasser',
+				video_name: 'yasser_cutscene'
 			},
 			{
 				sound: 'Farah',
@@ -77,9 +77,9 @@ var floors = [
 				video_name: 'rida_cutscene'
 			},
 			{
-				sound: 'Yasser',
-				npc_name: 'yasser',
-				video_name: 'yasser_cutscene'
+				sound: 'Karam',
+				npc_name: 'karam',
+				video_name: 'karam_cutscene'
 			},
 			{
 				sound: 'Tala',
@@ -144,10 +144,7 @@ class GameManager extends Phaser.Events.EventEmitter {
 		this.submitted = false;
 
 		this.on('game-over', (data) => {
-			this.score = 0;
-			this.currentFloor = 1;
-			this.pretendBusyUses = 3;
-			this.madDashUses = 3;
+			this.reset();
 		})
 
 		this.on('floor-cleared', (data) => {
@@ -157,16 +154,11 @@ class GameManager extends Phaser.Events.EventEmitter {
 
 	startGame(scene) {
 		console.log('starting new game')
-		this.currentFloor = 1;
-		this.pretendBusyUses = 3;
-		this.madDashUses = 3;
-		this.score = 0;
+		this.reset();
 		scene.scene.start('FloorScene', { floor: 1 });
 	}
 
 	nextFloor() {
-		console.log("this.currentFloor.", this.currentFloor)
-		console.log("this.maxFloors.", this.maxFloors)
 		if (this.currentFloor < this.maxFloors) {
 			setTimeout(() => {
 				this.currentFloor++;
@@ -174,7 +166,7 @@ class GameManager extends Phaser.Events.EventEmitter {
 			}, 1000);
 		} else {
 			this.emit('game-won');
-			this.submitLeaderboardAttempt();
+			// this.submitLeaderboardAttempt();
 			this.currentScene.scene.start('GameWon');
 		}
 	}
@@ -217,6 +209,14 @@ class GameManager extends Phaser.Events.EventEmitter {
 		});
 	}
 	
+	reset() {
+		this.currentFloor = 1;
+		this.score = 0;
+		this.pretendBusyUses = 3;
+		this.madDashUses = 3;
+		this.submitted = false;
+		this.removeAllListeners();
+	}
 }
 
 export default GameManager = new GameManager();

@@ -82,7 +82,6 @@ export class Preloader extends Scene {
 		this.load.audio('vocal_cute_angry', 'audio/Vibrant_UI_Mouse_Click_1.wav');
 		this.load.audio('dashing', 'audio/Vibrant_UI_Mouse_Click_1.wav');
 		this.load.audio('game_over', 'audio/Game Over.mp3');
-		this.load.audio('win', 'audio/win.wav');
 
 		this.load.video('farah_cutscene', 'cutscenes/farah_cutscene.mp4', 'loadeddata', false, true);
 		this.load.video('tala_cutscene', 'cutscenes/tala_cutscene.mp4', 'loadeddata', false, true);

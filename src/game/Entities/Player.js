@@ -121,13 +121,13 @@ export class Player {
 		});
 
 		// Setup joystick if needed
-		this.joystickBase = scene.add.circle(0, 0, 90, 0x888888).setScrollFactor(0);
-		this.joystickThumb = scene.add.circle(0, 0, 50, 0xcccccc).setScrollFactor(0);
+		this.joystickBase = scene.add.circle(0, 0, 170, 0x888888).setScrollFactor(0);
+		this.joystickThumb = scene.add.circle(0, 0, 110, 0xcccccc).setScrollFactor(0);
 
 		this.joystick = scene.plugins.get('rexVirtualJoystick').add(scene, {
 			x: scene.scale.width * 0.85,
 			y: scene.scale.height * 0.65,
-			radius: 90,
+			radius: 110,
 			base: this.joystickBase,
 			thumb: this.joystickThumb,
 		});

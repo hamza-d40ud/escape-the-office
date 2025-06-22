@@ -26,21 +26,9 @@ export class MainMenu extends Scene {
 			.setInteractive({ useHandCursor: true });
 	
 		startButton.on('pointerdown', () => {
-			if (!document.getElementById('nameInput')) {
-				this.showNameInput();
-			}
+			GameManager.startGame(this);
 		});
 	
-	
-		// Leaderboard Button (المتصدرين)
-		const leaderboardY = this.scale.height * 0.88;
-		const leaderboardButton = this.add.zone(startX, leaderboardY, buttonWidth, buttonHeight)
-			.setOrigin(0.5)
-			.setInteractive({ useHandCursor: true });
-	
-		leaderboardButton.on('pointerdown', () => {
-			this.scene.start('LeaderboardScene');
-		});
 	
 		// Play main menu music
 		this.menuMusic = this.sound.add('main_menu_m', {
@@ -129,7 +117,7 @@ export class MainMenu extends Scene {
 			if (playerName.length > 0) {
 				localStorage.setItem('username', playerName);
 				container.remove();
-				GameManager.startGame(this);
+				
 			} else {
 				alert('من فضلك أدخل اسمك!');
 			}
